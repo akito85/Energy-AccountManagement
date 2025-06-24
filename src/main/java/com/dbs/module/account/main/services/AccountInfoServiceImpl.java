@@ -1654,8 +1654,7 @@ public class AccountInfoServiceImpl {
 
     public ResponseEntity<ResponseObject> listAdvanceSearchCondition() {
         ResponseObject responseObject = new ResponseObject();
-        List<R_GLOBAL_TYPE_VALUE> listOfValue = globalTypeService.getDetailGlobalType("Advance Search Condition");
-//                rGlobalTypeValueRepo.findByGlobalType(196075);
+        List<R_GLOBAL_TYPE_VALUE> listOfValue = rGlobalTypeValueRepo.findByGlobalType(196075);
         List<ListOfValueDto> responseListOfValue = new ArrayList<>();
         listOfValue.forEach(data->{
             ListOfValueDto listOfValueDto = new ListOfValueDto();
@@ -1673,7 +1672,7 @@ public class AccountInfoServiceImpl {
 
     public ResponseEntity<ResponseObject> listAdvanceSearchOperator() {
         ResponseObject responseObject = new ResponseObject();
-        List<R_GLOBAL_TYPE_VALUE> listOfValue = globalTypeService.getDetailGlobalType("Advance Search Operator");
+        List<R_GLOBAL_TYPE_VALUE> listOfValue = rGlobalTypeValueRepo.findByGlobalType(196078);
         List<ListOfValueDto> responseListOfValue = new ArrayList<>();
         listOfValue.forEach(data->{
             ListOfValueDto listOfValueDto = new ListOfValueDto();
@@ -1691,7 +1690,7 @@ public class AccountInfoServiceImpl {
 
     public ResponseEntity<ResponseObject> listAdvanceSearchCusAccColumn() {
         ResponseObject responseObject = new ResponseObject();
-        List<R_GLOBAL_TYPE_VALUE> listOfValue = globalTypeService.getDetailGlobalType("Customer Account Column");
+        List<R_GLOBAL_TYPE_VALUE> listOfValue = rGlobalTypeValueRepo.findByGlobalType(196076);
         List<ListOfValueDto> responseListOfValue = new ArrayList<>();
         listOfValue.forEach(data->{
             ListOfValueDto listOfValueDto = new ListOfValueDto();

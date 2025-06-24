@@ -3,16 +3,15 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-deployment:
-  enabled: true
 
 image:
-  name: "imagePath"
+  repository: registry.pgn.co.id/billing-dev/dbs-module-account
   pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
 imagePullSecrets:
-  name: ""
+  - name: pgnregcred
 #nameOverride: ""
 #fullnameOverride: ""
 
@@ -25,19 +24,11 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: "default"
-#
+  name: ""
+
 podAnnotations:
-  releaseNamespace: "default"
-  vault:
-    enabled: true
-    authPath: ""
-    role: "default"
-    access_path: ""
-    secretPath: "energy-development/db_access"
-    inject: "update"
-    access_properties_un: spring.crm-datasource.userName={{ .Data.data.username }}
-    access_properties_pw: spring.crm-datasource.password={{ .Data.data.password }}
+  meta.helm.sh/release-name: "dbs-module-account"
+  meta.helm.sh/release-namespace: "billing-pgnbilling-staging"
 podLabels:
   helm.sh/chart: dbs-module-account
   app.kubernetes.io/name: dbs-module-account
@@ -45,17 +36,16 @@ podLabels:
   app.kubernetes.io/version: "1.0.0"
   app.kubernetes.io/managed-by: Helm
 
-#
-#podSecurityContext: {}
-## fsGroup: 2000
-#
-#securityContext: {}
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-# runAsUser: 1000
+  # runAsUser: 1000
 
 service:
   enabled: false
@@ -64,21 +54,19 @@ service:
 
 ingress:
   enabled: false
-  className: "nginx"
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: dev-energy.pgn.co.id
+    - host: chart-example.local
       paths:
         - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: dbs-module-account
-              port:
-                number: 8902
-  tls:
-    - secretName: crm-developemnt-tls
-      hosts:
-        - dev-energy.pgn.co.id
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -91,17 +79,15 @@ resources:
   requests:
     cpu: 1
     memory: 512Mi
-#
+
 livenessProbe:
-  tcpSocket: 8902
-  initialDelaySeconds: 240
-  timeoutSeconds: 20
+  initialDelaySeconds: 300
+  timeoutSeconds: 10
   successThreshold: 1
   failureThreshold: 5
 readinessProbe:
-  tcpSocket: 8902
-  initialDelaySeconds: 240
-  timeoutSeconds: 20
+  initialDelaySeconds: 300
+  timeoutSeconds: 10
   successThreshold: 1
   failureThreshold: 5
 

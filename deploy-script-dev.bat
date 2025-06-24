@@ -1,5 +1,6 @@
 @echo off
 
+powershell -ExecutionPolicy Bypass -File "..\tools-checker.ps1"
 
 REM Check the exit code of the PowerShell script
 IF %ERRORLEVEL% NEQ 0 (
@@ -18,24 +19,24 @@ if errorlevel 1 (
     docker build -t registry.pgn.co.id/billing-dev/dbs-module-account:latest .
     docker push registry.pgn.co.id/billing-dev/dbs-module-account:latest
 
-    @REM set KUBECONFIG="..\config"
-    @REM @echo "uninstall account-service"
-    @REM helm uninstall dbs-module-account --namespace=crm-development-space > .\helm-output\uninstall_response.txt
+    set KUBECONFIG="..\config"
+    @echo "uninstall account-service"
+    helm uninstall dbs-module-account --namespace=crm-development-space > .\helm-output\uninstall_response.txt
 
-    @REM findstr "uninstalled" .\helm-output\uninstall_response.txt
-    @REM if errorlevel 1 (
-    @REM     @echo Uninstall Process Failed, please run file init-deploy-stag.bat to type in cli like this ".\init-deploy-dev.bat"
-    @REM ) else (
-    @REM     @echo "re-install account-service"
-    @REM     helm install dbs-module-account .\dbs-module-account\ --namespace=crm-development-space > .\helm-output\install_response.txt
+    findstr "uninstalled" .\helm-output\uninstall_response.txt
+    if errorlevel 1 (
+        @echo Uninstall Process Failed, please run file init-deploy-stag.bat to type in cli like this ".\init-deploy-dev.bat"
+    ) else (
+        @echo "re-install account-service"
+        helm install dbs-module-account .\dbs-module-account\ --namespace=crm-development-space > .\helm-output\install_response.txt
 
-    @REM     findstr "STATUS: deployed" .\helm-output\install_response.txt
-    @REM     if errorlevel 1 (
-    @REM         @echo Install Process Failed !!
-    @REM     ) else (
-    @REM         @echo Install Process Succeeded !!
-    @REM         del .\helm-output\uninstall_response.txt
-    @REM         del .\helm-output\install_response.txt
-    @REM     )
-    @REM )
+        findstr "STATUS: deployed" .\helm-output\install_response.txt
+        if errorlevel 1 (
+            @echo Install Process Failed !!
+        ) else (
+            @echo Install Process Succeeded !!
+            del .\helm-output\uninstall_response.txt
+            del .\helm-output\install_response.txt
+        )
+    )
 )

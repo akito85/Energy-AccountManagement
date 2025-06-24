@@ -957,41 +957,29 @@ public class AccountService {
     }
     public ResponseEntity<ResponseObject> getBusinessPurposeList() {
         ResponseObject result = new ResponseObject();
+
         try {
-            Optional<M_GLOBAL_TYPE> auths = mGlobalTypeRepo.findAllByGroupNameAndStatusAndIsDeleted("Business Purpose",
-                    FlowStatus.ACTIVE.name(), false);
-            logger.info("List Business Purpose" + auths);
-            if (!auths.isEmpty()) {
-                List<R_GLOBAL_TYPE_VALUE> areas = auths.get().getRGlobalTypeValues().stream().filter(b -> b.getStatus().equals(FlowStatus.ACTIVE.name()))
-                        .collect(Collectors.toList());
-                List<MLocationDetailDTO> listType = new ArrayList<>();
-                if (!areas.isEmpty()) {
-                    int index = 0;
-                    for (R_GLOBAL_TYPE_VALUE rgtv : areas) {
-                        MLocationDetailDTO locDTO = new MLocationDetailDTO();
-                        locDTO.setId(rgtv.getGlbTypeValId());
-                        locDTO.setName(rgtv.getName());
-                        listType.add(index++, locDTO);
-                    }
-                    result.setSuccess(true);
-                    result.setCode(HttpStatus.OK);
-                    result.setMessage("Success Get List Business Purpose");
-                    result.setData(listType);
-                } else {
-                    result.setSuccess(false);
-                    result.setCode(HttpStatus.OK);
-                    result.setMessage("Failed Get List Business Purpose");
-                    result.setData(ResponseUtils.DATA_EMPTY);
-                }
-            } else {
-                result.setSuccess(false);
-                result.setCode(HttpStatus.OK);
-                result.setMessage("Failed Get List Business Purpose");
-                result.setData(ResponseUtils.DATA_EMPTY);
+
+            List<R_GLOBAL_TYPE_VALUE> getListTypeValue = rGlobalTypeValueRepo.findByGlobalType(38);
+            List<MLocationDetailDTO> listType = new ArrayList<>();
+            int index = 0;
+
+            for (R_GLOBAL_TYPE_VALUE type : getListTypeValue) {
+                MLocationDetailDTO locDTO = new MLocationDetailDTO();
+                locDTO.setId(type.getGlbTypeValId());
+                locDTO.setName(type.getName());
+                listType.add(index++, locDTO);
             }
 
+            result.setSuccess(true);
+            result.setCode(HttpStatus.OK);
+            result.setMessage("Success Get List Business Purpose");
+            result.setData(listType);
+
             return new ResponseEntity<>(result, HttpStatus.OK);
+
         } catch (Exception e) {
+
             logger.error(Constant.LOG_ERROR, e.getMessage(), e);
             return new ResponseEntity<>(
                     new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.INTERNAL_SERVER_ERROR,
@@ -999,7 +987,6 @@ public class AccountService {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
     public ResponseEntity<ResponseObject> getCountryCode() {
         ResponseObject result = new ResponseObject();
         try {
@@ -1479,41 +1466,29 @@ public class AccountService {
     }
     public ResponseEntity<ResponseObject> getTypeHomeList() {
         ResponseObject result = new ResponseObject();
+
         try {
-            Optional<M_GLOBAL_TYPE> auths = mGlobalTypeRepo.findAllByGroupNameAndStatusAndIsDeleted("Address Type",
-                    FlowStatus.ACTIVE.name(), false);
-            logger.info("List Type Home" + auths);
-            if (!auths.isEmpty()) {
-                List<R_GLOBAL_TYPE_VALUE> areas = auths.get().getRGlobalTypeValues().stream().filter(b -> b.getStatus().equals(FlowStatus.ACTIVE.name()))
-                        .collect(Collectors.toList());
-                List<MLocationDetailDTO> listType = new ArrayList<>();
-                if (!areas.isEmpty()) {
-                    int index = 0;
-                    for (R_GLOBAL_TYPE_VALUE rgtv : areas) {
-                        MLocationDetailDTO locDTO = new MLocationDetailDTO();
-                        locDTO.setId(rgtv.getGlbTypeValId());
-                        locDTO.setName(rgtv.getName());
-                        listType.add(index++, locDTO);
-                    }
-                    result.setSuccess(true);
-                    result.setCode(HttpStatus.OK);
-                    result.setMessage("Success Get List Type Home");
-                    result.setData(listType);
-                } else {
-                    result.setSuccess(false);
-                    result.setCode(HttpStatus.OK);
-                    result.setMessage("Failed Get List Type Home");
-                    result.setData(ResponseUtils.DATA_EMPTY);
-                }
-            } else {
-                result.setSuccess(false);
-                result.setCode(HttpStatus.OK);
-                result.setMessage("Failed Get List Type Home");
-                result.setData(ResponseUtils.DATA_EMPTY);
+
+            List<R_GLOBAL_TYPE_VALUE> getListTypeValue = rGlobalTypeValueRepo.findByGlobalType(33);
+            List<MLocationDetailDTO> listType = new ArrayList<>();
+            int index = 0;
+
+            for (R_GLOBAL_TYPE_VALUE type : getListTypeValue) {
+                MLocationDetailDTO locDTO = new MLocationDetailDTO();
+                locDTO.setId(type.getGlbTypeValId());
+                locDTO.setName(type.getName());
+                listType.add(index++, locDTO);
             }
 
+            result.setSuccess(true);
+            result.setCode(HttpStatus.OK);
+            result.setMessage("Success Get List Type Home");
+            result.setData(listType);
+
             return new ResponseEntity<>(result, HttpStatus.OK);
+
         } catch (Exception e) {
+
             logger.error(Constant.LOG_ERROR, e.getMessage(), e);
             return new ResponseEntity<>(
                     new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.INTERNAL_SERVER_ERROR,

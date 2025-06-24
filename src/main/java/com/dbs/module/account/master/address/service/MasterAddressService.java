@@ -57,8 +57,6 @@ import java.util.stream.StreamSupport;
 import static com.dbs.common.library.utils.StringUtils.capitalizeFully;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import com.dbs.database.crm.repositories.mastermanagement.MLocationsRepo;
-import com.dbs.module.account.main.dto.AccountDTO;
-import javax.validation.ConstraintViolation;
 
 @Service
 public class MasterAddressService {
@@ -287,7 +285,7 @@ public class MasterAddressService {
 
     public ResponseEntity<ResponseObject> validateCreateMasterAddress(Boolean api, CreateUpdateDTO request) {
         try {
-            Set<ConstraintViolation<CreateUpdateDTO>> violations = this.validator.validate(request);
+            var violations = validator.validate(request);
             if (!violations.isEmpty()) {
                 List<Map<String, Object>> violationHeaderList = new ArrayList<>();
                 List<String> validateHeader = new ArrayList<>();

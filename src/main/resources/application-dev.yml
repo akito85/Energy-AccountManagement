@@ -3,12 +3,8 @@
 #-->IP SERVER
 #spring.datasource.url: jdbc:oracle:thin:@103.65.96.187:1521:ORCLCDB
 # PGN
-# spring.datasource.url: jdbc:oracle:thin:@10.129.2.173:1523:PDEV
-# spring.datasource.driver-class-name: oracle.jdbc.OracleDriver
-
-spring.datasource.url: jdbc:oracle:thin:@167.71.200.144:1523/PDEV
-spring.crm-datasource.userName: PGNBILL
-spring.crm-datasource.password: P4ntang_M3nyer4h
+spring.datasource.url: jdbc:oracle:thin:@10.129.2.173:1523:PDEV
+spring.datasource.driver-class-name: oracle.jdbc.OracleDriver
 
 spring.datasource.hikari.maxLifetime: 1800000
 spring.datasource.hikari.connectionTimeout: 30000
@@ -25,6 +21,10 @@ log4j.logger.org.hibernate.type: TRACE
 ##SHG CRM
 #spring.crm-datasource.userName: shg_crm_new
 #spring.crm-datasource.password: shg_crm_new
+
+#PGN CRM
+spring.crm-datasource.userName: PGNBILL
+spring.crm-datasource.password: P4ntang_M3nyer4h
 
 #SHG PAYMENT
 #spring.pym-datasource.userName: shg_payment

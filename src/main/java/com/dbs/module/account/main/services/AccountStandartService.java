@@ -77,8 +77,6 @@ import java.util.stream.Collectors;
 import static com.dbs.common.base.utils.CommonHelper.removeSpace;
 import static com.dbs.common.base.utils.Constant.GET_CC_CHILD;
 import com.dbs.database.crm.repositories.mastermanagement.MLocationsRepo;
-import com.dbs.module.account.main.dto.MCustomerDTO;
-import javax.validation.ConstraintViolation;
 
 @Service
 @RequiredArgsConstructor
@@ -562,11 +560,30 @@ public class AccountStandartService {
         }
     }
 
+    //acr
+    public ResponseEntity<ResponseObject> validateCreateAccountxyz(CreateAccountStandartDTOxyz dto) {
+        // MANDATORY INITIAL
+        // for save id  new address
+        List<Integer> allIdAddress = new ArrayList<>();
+        int idNew = 1;
+        // for add business purposes tax address
+        if(dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().contains("TEMP")) {
+            List<Integer> businessPurposeAddress = dto.getAccountAddress().get(Integer.parseInt(dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().replaceAll("TEMP", ""))-1).getBusinessPurpose();
+            businessPurposeAddress.add(162);
+            dto.getAccountAddress().get(Integer.parseInt(dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().replaceAll("TEMP", ""))-1).setBusinessPurpose(businessPurposeAddress);
+        } else {
+            dto.getAccountAddress().stream()
+                    .filter(c -> c.getAddressId()!=null && c.getAddressId().equals(Integer.parseInt(dto.getFinancialInformation().getTaxIdentifier().getTaxAddress())))
+                    .forEach(c -> {
+                        List<Integer> businessPurposeAddress = c.getBusinessPurpose();
+                        businessPurposeAddress.add(162);
+                        c.setBusinessPurpose(businessPurposeAddress);
+                    });
+        }
 
-    public ResponseEntity<ResponseObject> validateCreateAccount(CreateAccountStandartDTO dto) {
         // == ACCOUNT ==
         // DTO
-        Set<ConstraintViolation<MCustomerDTO>> violationsAccount = this.validator.validate(dto.getCustomerInformation());
+        var violationsAccount = validator.validate(dto.getAccountInformation());
         if (!violationsAccount.isEmpty()) {
             List<Map<String, Object>> violationHeaderList = new ArrayList<>();
             List<String> validateHeader = new ArrayList<>();
@@ -591,7 +608,139 @@ public class AccountStandartService {
         // == CUSTOMER ==
         if(!dto.getRegistered()) {
             // DTO
-            Set<ConstraintViolation<AccountDTO>> violationsCustomer = this.validator.validate(dto.getAccountInformation());
+            var violationsCustomer = validator.validate(dto.getCustomerInformation());
+            if (!violationsCustomer.isEmpty()) {
+                List<Map<String, Object>> violationHeaderList = new ArrayList<>();
+                List<String> validateHeader = new ArrayList<>();
+                for (var violation : violationsCustomer) {
+                    logger.error(violation.getMessage());
+                    Map<String, Object> data = new HashMap<>();
+                    validateHeader.add(violation.getMessage());
+                    data.put(violation.getPropertyPath().toString(), violation.getMessage());
+                    violationHeaderList.add(data);
+                }
+                ResponseObject result = new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST, validateHeader.get(0), violationHeaderList);
+                return new ResponseEntity<>(result, result.getHttpCode());
+            }
+            // IF ORGANIZATION, FIRSTNAME NOT BE EMPTY
+            if(!dto.getCustomerInformation().getCustomerType().equals(58)
+                    && removeSpace(dto.getCustomerInformation().getFirstName()) == null){
+                return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST,
+                        "Firstname not be empty", ResponseUtils.DATA_EMPTY), HttpStatus.BAD_REQUEST);
+            }
+            // UNIQUE CUSTOMER IDENTIFICATION NUMBER
+            if (mCustomerRepo.existsByCustomerIdentificationNumber(dto.getCustomerInformation().getCustomerIdentificationNumber())) {
+                return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST,
+                        "Customer Identification Number already exist", ResponseUtils.DATA_EMPTY), HttpStatus.BAD_REQUEST);
+            }
+        }
+        // == ACCOUNT ADDRESS ==
+        for(AccountAddressCreateDTO addressCreate : dto.getAccountAddress()) {
+            if(addressCreate.getAddressId()==null) {
+                // UNIQUE ADDRESS
+                Optional<M_ADDRESSES> cekFullAddressExist = mAddressRepo.findByFullAddress(addressCreate.getAddress());
+                if(cekFullAddressExist.isPresent()){
+                    return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST,
+                            "The Address have been registered", ResponseUtils.DATA_EMPTY), HttpStatus.BAD_REQUEST);
+                }
+                allIdAddress.add(idNew);
+                idNew++;
+            } else {
+                allIdAddress.add(addressCreate.getAddressId());
+            }
+        }
+        // == ACCOUNT CONTACT ==
+        for(AccountContactCreateDTO contactCreate : dto.getAccountContact()) {
+            if(contactCreate.getContactId()==null) {
+                // UNIQUE CONTACT
+                Optional<M_CONTACT> cekExist = mContactRepo.findTopByContactNameAndJobIdAndPositionId(removeSpace(contactCreate.getContactName()), contactCreate.getJobId(), contactCreate.getPositionId());
+                if(cekExist.isPresent()) {
+                    return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST,
+                            "The contact data name, job and position have been registered", ResponseUtils.DATA_EMPTY), HttpStatus.BAD_REQUEST);
+                }
+            }
+            // save contact address
+            if(contactCreate.getContactAddress().contains("TEMP")) {
+                logger.info("contactAddress temp : " + allIdAddress.get(Integer.parseInt(contactCreate.getContactAddress().replaceAll("TEMP", ""))-1));
+            } else {
+                logger.info("contactAddress not temp : " + Integer.parseInt(contactCreate.getContactAddress()));
+            }
+        }
+        // == DISTRIBUTION MEDIA ==
+        // DTO
+        for(DismeCreateRequestDTO dismeCreate : dto.getDistributionMedia()) {
+            var violationsDisme = validator.validate(dismeCreate);
+            if (!violationsDisme.isEmpty()) {
+                List<Map<String, Object>> violationList = new ArrayList<>();
+                List<String> validate = new ArrayList<>();
+                for (var violation : violationsDisme) {
+                    logger.error(violation.getMessage());
+                    Map<String, Object> data = new HashMap<>();
+                    validate.add(violation.getMessage());
+                    data.put(violation.getPropertyPath().toString(), violation.getMessage());
+                    violationList.add(data);
+                }
+                ResponseObject result = new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST, validate.get(0), violationList);
+                return new ResponseEntity<>(result, result.getHttpCode());
+            }
+
+            if(dismeCreate.getStartDate()!=null && !UtilsDate.validateDate(dismeCreate.getStartDate())) {
+                return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST,
+                        "Start date must be greater than current date", ResponseUtils.DATA_EMPTY), HttpStatus.BAD_REQUEST);
+            }
+        }
+        // save tax identifier address
+        if(dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().contains("TEMP")) {
+            logger.info("taxAddress temp : " + allIdAddress.get(Integer.parseInt(dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().replaceAll("TEMP", ""))-1));
+        } else {
+            logger.info("taxAddress not temp : " + Integer.parseInt(dto.getFinancialInformation().getTaxIdentifier().getTaxAddress()));
+        }
+        // == TAX RELATION ==
+        // START DATE >= CURRENT DATE
+        if(dto.getFinancialInformation().getTaxRelation().getStartDate()!=null && !UtilsDate.validateDate(dto.getFinancialInformation().getTaxRelation().getStartDate())) {
+            return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST,
+                    "Start date must be greater than current date", ResponseUtils.DATA_EMPTY), HttpStatus.BAD_REQUEST);
+        }
+        // WITHOLDING TAX ==
+        // START DATE >= CURRENT DATE
+        if(dto.getFinancialInformation().getWapu().getStartDate()!=null && !UtilsDate.validateDate(dto.getFinancialInformation().getWapu().getStartDate())) {
+            return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST,
+                    "Start date must be greater than current date", ResponseUtils.DATA_EMPTY), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_TRUE, HttpStatus.OK,
+                "Success validate create account", ResponseUtils.DATA_EMPTY), HttpStatus.OK);
+    }
+
+    public ResponseEntity<ResponseObject> validateCreateAccount(CreateAccountStandartDTO dto) {
+        // == ACCOUNT ==
+        // DTO
+        var violationsAccount = validator.validate(dto.getAccountInformation());
+        if (!violationsAccount.isEmpty()) {
+            List<Map<String, Object>> violationHeaderList = new ArrayList<>();
+            List<String> validateHeader = new ArrayList<>();
+            for (var violation : violationsAccount) {
+                logger.error(violation.getMessage());
+                Map<String, Object> data = new HashMap<>();
+                validateHeader.add(violation.getMessage());
+                data.put(violation.getPropertyPath().toString(), violation.getMessage());
+                violationHeaderList.add(data);
+            }
+            ResponseObject result = new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST, validateHeader.get(0), violationHeaderList);
+            return new ResponseEntity<>(result, result.getHttpCode());
+        }
+        // REGISTRASI NUMBER
+        if(dto.getAccountInformation().getRegistrationNumber() != null) {
+            Optional<M_ACCOUNT> cekRegisNumber = mAccountRepo.findTopByRegistrationNumber(dto.getAccountInformation().getRegistrationNumber());
+            if (cekRegisNumber.isPresent()) {
+                return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.BAD_REQUEST,
+                        "Account Registration Number already exist", ResponseUtils.DATA_EMPTY), HttpStatus.BAD_REQUEST);
+            }
+        }
+        // == CUSTOMER ==
+        if(!dto.getRegistered()) {
+            // DTO
+            var violationsCustomer = validator.validate(dto.getAccountInformation());
             if (!violationsCustomer.isEmpty()) {
                 List<Map<String, Object>> violationHeaderList = new ArrayList<>();
                 List<String> validateHeader = new ArrayList<>();
@@ -648,7 +797,7 @@ public class AccountStandartService {
         }
         for(AccountAddressCreateDTO addressCreate : allDataAddressCreate) {
             // DTO
-            Set<ConstraintViolation<AccountAddressCreateDTO>> violationsAddr = this.validator.validate(addressCreate);
+            var violationsAddr = validator.validate(addressCreate);
             if (!violationsAddr.isEmpty()) {
                 List<Map<String, Object>> violationList = new ArrayList<>();
                 List<String> validate = new ArrayList<>();
@@ -695,7 +844,7 @@ public class AccountStandartService {
         }
         // == DISTRIBUTION MEDIA ==
         for(DismeCreateRequestDTO dismeCreate : dto.getDistributionMedia()) {
-            Set<ConstraintViolation<DismeCreateRequestDTO>> violationsDisme = this.validator.validate(dismeCreate);
+            var violationsDisme = validator.validate(dismeCreate);
             if (!violationsDisme.isEmpty()) {
                 List<Map<String, Object>> violationList = new ArrayList<>();
                 List<String> validate = new ArrayList<>();
@@ -780,9 +929,9 @@ public class AccountStandartService {
                 mCustomer.setCreatedBy(UserDetailUtils.getUsername());
                 mCustomer.setCreatedDate(new Date());
                 mCustomerRepo.save(mCustomer);
-                R_GLOBAL_TYPE_VALUE glbValue = globalTypeValueService.getGlobalTypeByGlbValue("Party Type", CreateParty.CUSTOMER);
+
                 // SAVED PARTY CUSTOMER
-                Integer partyIdCustomer = party.createParty(glbValue.getGlbValue(), mCustomer.getCustomerId().toString(), mCustomer.getCustomerIdentificationNumber(), mCustomer.getCustomerName(), UserDetailUtils.getUserEntity());
+                Integer partyIdCustomer = party.createParty(CreateParty.CUSTOMER, mCustomer.getCustomerId().toString(), mCustomer.getCustomerIdentificationNumber(), mCustomer.getCustomerName(), UserDetailUtils.getUserEntity());
                 mCustomer.setPartyId(partyIdCustomer);
                 mCustomerRepo.save(mCustomer);
                 allData.put("customer", mCustomer);
@@ -832,8 +981,7 @@ public class AccountStandartService {
             mAccountRepo.save(mAccount);
 
             // SAVED PARTY ACCOUNT
-            R_GLOBAL_TYPE_VALUE glbValue = globalTypeValueService.getGlobalTypeByGlbValue("Party Type", CreateParty.ACCOUNT);
-            Integer partyIdAccount = party.createParty(glbValue.getGlbValue(), mAccount.getAccountId().toString(), mAccount.getAccountNumber(), mAccount.getAccountName(), UserDetailUtils.getUserEntity());
+            Integer partyIdAccount = party.createParty(CreateParty.ACCOUNT, mAccount.getAccountId().toString(), mAccount.getAccountNumber(), mAccount.getAccountName(), UserDetailUtils.getUserEntity());
             mAccount.setPartyId(partyIdAccount);
             mAccountRepo.save(mAccount);
             allData.put("account", mAccount);
@@ -869,58 +1017,50 @@ public class AccountStandartService {
             }
 
             // ADD BUSINESS PURPOSES TAX
-            Optional<R_GLOBAL_TYPE_VALUE> rBp = globalTypeValueService.getOptionalGlobalTypeByGlbValue("Business Purpose",
-                "TAX");
             if(dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().contains("TEMP")){
                 String idTaxTemp = dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().replaceAll("TEMP", "");
                 if(idTaxTemp.equals("1")) {
                     List<Integer> bA1 = dto.getAccountAddress().getAddress1().getBusinessPurpose();
-                    bA1.add(rBp.get().getGlbTypeValId());
+                    bA1.add(162);
                     dto.getAccountAddress().getAddress1().setBusinessPurpose(bA1);
                 } else if(idTaxTemp.equals("2")) {
                     List<Integer> bA1 = dto.getAccountAddress().getAddress2().getBusinessPurpose();
-                    bA1.add(rBp.get().getGlbTypeValId());
+                    bA1.add(162);
                     dto.getAccountAddress().getAddress2().setBusinessPurpose(bA1);
                 } else if(idTaxTemp.equals("3")) {
                     List<Integer> bA1 = dto.getAccountAddress().getAddress3().getBusinessPurpose();
-                    bA1.add(rBp.get().getGlbTypeValId());
+                    bA1.add(162);
                     dto.getAccountAddress().getAddress3().setBusinessPurpose(bA1);
                 } else if(idTaxTemp.equals("4")) {
                     List<Integer> bA1 = dto.getAccountAddress().getAddress4().getBusinessPurpose();
-                    bA1.add(rBp.get().getGlbTypeValId());
+                    bA1.add(162);
                     dto.getAccountAddress().getAddress4().setBusinessPurpose(bA1);
                 }
             } else if(StringUtils.hasValue(dto.getAccountAddress().getAddress1()) && StringUtils.hasValue(dto.getAccountAddress().getAddress1().getAddressId()) && dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().equalsIgnoreCase(dto.getAccountAddress().getAddress1().getAddressId().toString())) {
                 List<Integer> bA1 = dto.getAccountAddress().getAddress1().getBusinessPurpose();
-                bA1.add(rBp.get().getGlbTypeValId());
+                bA1.add(162);
                 dto.getAccountAddress().getAddress1().setBusinessPurpose(bA1);
             } else if(StringUtils.hasValue(dto.getAccountAddress().getAddress2()) && StringUtils.hasValue(dto.getAccountAddress().getAddress2().getAddressId()) && dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().equalsIgnoreCase(dto.getAccountAddress().getAddress2().getAddressId().toString())) {
                 List<Integer> bA1 = dto.getAccountAddress().getAddress2().getBusinessPurpose();
-                bA1.add(rBp.get().getGlbTypeValId());
+                bA1.add(162);
                 dto.getAccountAddress().getAddress2().setBusinessPurpose(bA1);
             } else if(StringUtils.hasValue(dto.getAccountAddress().getAddress3()) && StringUtils.hasValue(dto.getAccountAddress().getAddress3().getAddressId()) && dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().equalsIgnoreCase(dto.getAccountAddress().getAddress3().getAddressId().toString())) {
                 List<Integer> bA1 = dto.getAccountAddress().getAddress3().getBusinessPurpose();
-                bA1.add(rBp.get().getGlbTypeValId());
+                bA1.add(162);
                 dto.getAccountAddress().getAddress3().setBusinessPurpose(bA1);
             } else if(StringUtils.hasValue(dto.getAccountAddress().getAddress4()) && StringUtils.hasValue(dto.getAccountAddress().getAddress4().getAddressId()) && dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().equalsIgnoreCase(dto.getAccountAddress().getAddress4().getAddressId().toString())) {
                 List<Integer> bA1 = dto.getAccountAddress().getAddress4().getBusinessPurpose();
-                bA1.add(rBp.get().getGlbTypeValId());
+                bA1.add(162);
                 dto.getAccountAddress().getAddress4().setBusinessPurpose(bA1);
             }
 
             // STEP ADDRESS
             List<Integer> saveIdAd = new ArrayList<>();
             Integer savedAddress;
-            Optional<R_GLOBAL_TYPE_VALUE> rBpBillTo = globalTypeValueService
-                .getOptionalGlobalTypeByGlbValue("Business Purpose", "BILL_TO");
-            Optional<R_GLOBAL_TYPE_VALUE> rBpShipTo = globalTypeValueService
-                .getOptionalGlobalTypeByGlbValue("Business Purpose", "SHIP_TO");
             for(AccountAddressCreateDTO accountAddress : allDataAddressCreate){
                 savedAddress = 0;
-                Optional<Integer> bpShipTo = accountAddress.getBusinessPurpose().stream()
-                    .filter(e -> e.equals(rBpShipTo.get().getGlbTypeValId())).findAny();
-                Optional<Integer> bpBillTo = accountAddress.getBusinessPurpose().stream()
-                    .filter(e -> e.equals(rBpBillTo.get().getGlbTypeValId())).findAny();
+                Optional<Integer> bpShipTo = accountAddress.getBusinessPurpose().stream().filter(e->e.equals(166)).findAny();
+                Optional<Integer> bpBillTo = accountAddress.getBusinessPurpose().stream().filter(e->e.equals(167)).findAny();
                 int next = 0;
                 for (Integer bp : accountAddress.getBusinessPurpose()) {
                     if(savedAddress<1) {
@@ -957,7 +1097,7 @@ public class AccountStandartService {
                     // SAVED ACCOUNT ADDRESS
                     M_ACCOUNT_ADDRESS accAddress = new M_ACCOUNT_ADDRESS();
                     // CEK PRIMARY FLAG & PREMISE FLAG
-                    if (bpShipTo.isPresent() && bp.equals(rBpShipTo.get().getGlbTypeValId())) {
+                    if (bpShipTo.isPresent() && bp.equals(166)) {
                         accAddress.setPremiseFlag(Boolean.TRUE);
                     } else {
                         if (bpShipTo.isEmpty() && next == 0) {
@@ -966,7 +1106,7 @@ public class AccountStandartService {
                             accAddress.setPremiseFlag(Boolean.FALSE);
                         }
                     }
-                    if (bpBillTo.isPresent() && bp.equals(rBpBillTo.get().getGlbTypeValId())) {
+                    if (bpBillTo.isPresent() && bp.equals(167)) {
                         accAddress.setPrimaryFlag(Boolean.TRUE);
                     } else {
                         if (bpShipTo.isEmpty() && next == 0) {
@@ -1023,8 +1163,7 @@ public class AccountStandartService {
                     mContactRepo.save(mContact);
 
                     // SAVED PARTY CONTACT
-                    R_GLOBAL_TYPE_VALUE glbValContact = globalTypeValueService.getGlobalTypeByGlbValue("Party Type", CreateParty.CONTACT);
-                    Integer partyIdContact = party.createParty(glbValContact.getGlbValue(), mContact.getContactId().toString(), mContact.getContactName(), mContact.getContactName(), UserDetailUtils.getUserEntity());
+                    Integer partyIdContact = party.createParty(CreateParty.CONTACT, mContact.getContactId().toString(), mContact.getContactName(), mContact.getContactName(), UserDetailUtils.getUserEntity());
                     mContact.setPartyId(partyIdContact);
                     mContactRepo.save(mContact);
 
@@ -1293,13 +1432,7 @@ public class AccountStandartService {
 
             // GET ALL DATA CRITERIA PPN
             List<Integer> idPPN  = new ArrayList<>();
-            Optional<R_GLOBAL_TYPE_VALUE> rCategory = globalTypeValueService
-                    .getOptionalGlobalTypeByGlbValue("Tax Implication Category", "PPN");
-            Optional<R_GLOBAL_TYPE_VALUE> rServiceType = globalTypeValueService
-                    .getOptionalGlobalTypeByGlbValue("Tax Implication Service Type", "ADDITIONAL_GAS_SERVICES");
-            List<M_AM_TAXIMPLICATION> dataPPN = taxImpliRepo.findAllByCategoryAndServiceType(
-                    rCategory.isPresent() ? rCategory.get().getGlbTypeValId() : null,
-                    rServiceType.isPresent() ? rServiceType.get().getGlbTypeValId() : null);
+            List<M_AM_TAXIMPLICATION> dataPPN = taxImpliRepo.findAllByCategoryAndServiceType(127, 130);
             for(M_AM_TAXIMPLICATION ppn : dataPPN){
                 idPPN.add(ppn.getId());
             }

@@ -30,6 +30,7 @@ import com.dbs.module.account.detail.serviceagreement.dto.SaUpdateDraftDTO;
 import com.dbs.module.account.detail.serviceagreement.dto.SaDetailDraftDTO;
 import com.dbs.module.account.detail.serviceagreement.dto.SaPriceRuleDTO;
 import com.dbs.module.account.detail.serviceagreement.dto.SaViewDetailDTO;
+import com.dbs.module.account.detail.serviceagreement.dto.SaViewDTO;
 import com.dbs.module.account.detail.serviceagreement.dto.SaInfoDetailDTO;
 import com.dbs.module.account.detail.serviceagreement.dto.SaCreateDTO;
 import com.dbs.common.base.utils.Constant;
@@ -84,15 +85,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.dbs.common.base.utils.CommonHelper.removeSpace;
-import com.dbs.module.account.detail.serviceagreement.dto.SaViewDTO;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
@@ -309,7 +311,7 @@ public class SAService {
             PagedResourcesAssembler<VW_SA> assembler,
             Integer accountId
     ) {
-//        logger.info("Get List View Service Agreement with Paging");
+        logger.info("Get List View Service Agreement with Paging");
 
         ResponseObject result = new ResponseObject();
 
