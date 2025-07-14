@@ -1,0 +1,44 @@
+name: Deploy to AKS with Kubeconfig
+
+on:
+  push:
+    branches:
+      - account-management-temp
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: registry.pgn.co.id/billing-dev/dbs-module-um
+      IMAGE_TAG: latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Login to Hub
+      uses: https://registry.pgn.co.id/
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and Push Docker image
+      run: |
+        docker build -t $IMAGE_NAME:$IMAGE_TAG .
+        docker push $IMAGE_NAME:$IMAGE_TAG
+
+    - name: Set up kubeconfig to access cluster
+      run: |
+        mkdir -p $HOME/.kube
+        cp pgnbilling-access/pgnbilling-billing.kubeconfig $HOME/pgnbilling-access/pgnbilling-billing.kubeconfig
+        echo "KUBECONFIG=$HOME/pgnbilling-access/pgnbilling-billing.kubeconfig" >> $GITHUB_ENV
+
+    - name: Test Kubernetes connectivity
+      run: |
+        kubectl get nodes
+
+    - name: Deploy Kubernetes manifests
+      run: |
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
