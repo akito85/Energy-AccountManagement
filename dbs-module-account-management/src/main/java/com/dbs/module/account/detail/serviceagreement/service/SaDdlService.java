@@ -916,7 +916,7 @@ public class SaDdlService {
         ResponseObject result = new ResponseObject();
 
         try {
-            List<R_GLOBAL_TYPE_VALUE> datas = rGlobalTypeValueRepo.findAllByGlobalTypeAndStatus(602, FlowStatus.ACTIVE.name());
+            List<R_GLOBAL_TYPE_VALUE> datas = globalTypeValueService.getDetailGlobalType("Service Type");
             List<DdlMapperDTO> newData = new ArrayList<>();
             for (R_GLOBAL_TYPE_VALUE data : datas) {
                 DdlMapperDTO dataDto = new DdlMapperDTO();
@@ -946,7 +946,9 @@ public class SaDdlService {
         ResponseObject result = new ResponseObject();
 
         try {
-            List<R_GLOBAL_TYPE_VALUE> datas = rGlobalTypeValueRepo.findAllByGlobalTypeAndParentValue(56, serviceTypeId);
+            globalTypeValueService.getGlobalTypeByParentValue("SA Type Main", serviceTypeId);
+//            List<R_GLOBAL_TYPE_VALUE> datas = rGlobalTypeValueRepo.findAllByGlobalTypeAndParentValue(56, serviceTypeId);
+            List<R_GLOBAL_TYPE_VALUE> datas = globalTypeValueService.getGlobalTypeByParentValue("SA Type Main", serviceTypeId);
             List<DdlMapperDTO> newData = new ArrayList<>();
             for (R_GLOBAL_TYPE_VALUE data : datas) {
                 DdlMapperDTO dataDto = new DdlMapperDTO();
@@ -976,7 +978,8 @@ public class SaDdlService {
         ResponseObject result = new ResponseObject();
 
         try {
-            List<R_GLOBAL_TYPE_VALUE> datas = rGlobalTypeValueRepo.findAllByGlobalTypeAndParentValue(196060, serviceTypeId);
+            List<R_GLOBAL_TYPE_VALUE> datas = globalTypeValueService.getGlobalTypeByParentValue("SA Type Addon", serviceTypeId);
+//            List<R_GLOBAL_TYPE_VALUE> datas = rGlobalTypeValueRepo.findAllByGlobalTypeAndParentValue(196060, serviceTypeId);
             List<DdlMapperDTO> newData = new ArrayList<>();
             for (R_GLOBAL_TYPE_VALUE data : datas) {
                 DdlMapperDTO dataDto = new DdlMapperDTO();
@@ -1732,21 +1735,31 @@ public class SaDdlService {
 
             // GET DATA ACCOUNT
             Optional<VW_ACCOUNT_CRITERIA> dataAccount = vwAccountCriteriaRepo.findByAccountId(request.getAccountId());
-
+            List<R_GLOBAL_TYPE_VALUE> rCategorys = globalTypeValueService
+                .getDetailGlobalType("Tax Implication Category");
+            Optional<R_GLOBAL_TYPE_VALUE> rServiceTypeAgs = globalTypeValueService
+                .getOptionalGlobalTypeByGlbValue("Tax Implication Service Type", "ADDITIONAL_GAS_SERVICES");
+            Optional<R_GLOBAL_TYPE_VALUE> rServiceTypeGas = globalTypeValueService
+                .getOptionalGlobalTypeByGlbValue("Tax Implication Service Type", "GAS");
+            Optional<R_GLOBAL_TYPE_VALUE> rServiceTypeNonGas = globalTypeValueService
+                .getOptionalGlobalTypeByGlbValue("Tax Implication Service Type", "NON_GAS");
             if(dataAccount.isPresent()) {
-                List<Integer> categoryId = new ArrayList<>(); //ppn pph
-                categoryId.add(127);
-                categoryId.add(128);
+                List<Integer> categoryId = rCategorys.stream().map(e->e.getGlbTypeValId()).collect(Collectors.toList()); //ppn pph
+//                categoryId.add(127);
+//                categoryId.add(128);
 
                 for(Integer cat : categoryId) {
                     List<Integer> idPPNPPH  = new ArrayList<>();
                     List<M_AM_TAXIMPLICATION> dataPPNPPH;
                     if(request.getServiceType() == 608) {
-                        dataPPNPPH = taxImpliRepo.findAllByCategoryAndServiceType(cat, 131);
+                        dataPPNPPH = taxImpliRepo.findAllByCategoryAndServiceType(cat, 
+                                rServiceTypeGas.isPresent() ? rServiceTypeGas.get().getGlbTypeValId() : null);
                     }else if(request.getServiceType() == 609){
-                        dataPPNPPH = taxImpliRepo.findAllByCategoryAndServiceType(cat, 129);
+                        dataPPNPPH = taxImpliRepo.findAllByCategoryAndServiceType(cat, 
+                                rServiceTypeNonGas.isPresent() ? rServiceTypeNonGas.get().getGlbTypeValId() : null);
                     }else {
-                        dataPPNPPH = taxImpliRepo.findAllByCategoryAndServiceType(cat, 130);
+                        dataPPNPPH = taxImpliRepo.findAllByCategoryAndServiceType(cat, 
+                                rServiceTypeAgs.isPresent() ? rServiceTypeAgs.get().getGlbTypeValId() : null);
                     }
 
                     if(!dataPPNPPH.isEmpty()) {

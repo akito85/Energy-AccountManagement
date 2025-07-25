@@ -1283,7 +1283,13 @@ public class AccountStandartService {
 
             // GET ALL DATA CRITERIA PPN
             List<Integer> idPPN  = new ArrayList<>();
-            List<M_AM_TAXIMPLICATION> dataPPN = taxImpliRepo.findAllByCategoryAndServiceType(127, 130);
+            Optional<R_GLOBAL_TYPE_VALUE> rCategory = globalTypeValueService
+                    .getOptionalGlobalTypeByGlbValue("Tax Implication Category", "PPN");
+            Optional<R_GLOBAL_TYPE_VALUE> rServiceType = globalTypeValueService
+                    .getOptionalGlobalTypeByGlbValue("Tax Implication Service Type", "ADDITIONAL_GAS_SERVICES");
+            List<M_AM_TAXIMPLICATION> dataPPN = taxImpliRepo.findAllByCategoryAndServiceType(
+                    rCategory.isPresent() ? rCategory.get().getGlbTypeValId() : null,
+                    rServiceType.isPresent() ? rServiceType.get().getGlbTypeValId() : null);
             for(M_AM_TAXIMPLICATION ppn : dataPPN){
                 idPPN.add(ppn.getId());
             }
