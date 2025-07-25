@@ -1,0 +1,11 @@
+backend.app.jwt.secret: 8xds//H4wsYnk+yYleprfr3uajuXN9svF8jVz4OrllQ=hjk76klz//ok891=fflkjk4hjG7jsadJn
+backend.app.jwt.expiration: 2147483647
+
+#Max upload size
+spring.servlet.multipart.max-file-size: 2MB
+spring.servlet.multipart.max-request-size: 2MB
+
+dir.base.domain: corp.pgn.co.id
+dir.base.url: 10.129.1.11:389
+dir.base.organik: CN=Dede Aliamsyah,OU=Organik,OU=Pusat,OU=UserAccounts,DC=corp,DC=pgn,DC=co,DC=id
+dir.base.nonorganik: CN=Aldri Wilza,OU=Mitra Kerja,OU=Pusat,OU=UserAccounts,DC=corp,DC=pgn,DC=co,DC=id

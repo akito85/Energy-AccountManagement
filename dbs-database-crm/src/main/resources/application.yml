@@ -1,0 +1,31 @@
+
+#-->IP LOCAL
+spring.datasource.url: jdbc:oracle:thin:@172.31.166.78:1521:ORCLCDB
+#-->IP SERVER
+#spring.datasource.url: jdbc:oracle:thin:@103.65.96.187:1521:ORCLCDB
+spring.datasource.driver-class-name: oracle.jdbc.OracleDriver
+spring.datasource.hikari.maxLifetime: 1800000
+spring.datasource.hikari.connectionTimeout: 30000
+spring.datasource.hikari.idleTimeout: 600000
+spring.datasource.hikari.maximumPoolSize: 30
+spring.hibernate.ddl-auto: none
+spring.hibernate.dialect: org.hibernate.dialect.Oracle12cDialect
+spring.hibernate.show_sql: false
+spring.hibernate.implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+spring.hibernate.physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+log4j.logger.org.hibernate.SQL: DEBUG
+log4j.logger.org.hibernate.type: TRACE
+
+#SHG CRM
+spring.crm-datasource.userName: shg_crm_new
+spring.crm-datasource.password: shg_crm_new
+
+#SHG PAYMENT
+#spring.pym-datasource.userName: shg_payment
+#spring.pym-datasource.password: shg_payment
+
+#SHG INVOICE
+#spring.inv-datasource.userName: shg_invoice
+#spring.inv-datasource.password: shg_invoice
+
+server.port: 8906

@@ -1,0 +1,60 @@
+package com.dbs.database.crm.repositories.accountmanagement.Account.view;
+
+import com.dbs.common.base.utils.MaterialTablePagingRequest;
+import com.dbs.common.base.utils.PagingUtils;
+import com.dbs.database.crm.entities.accountmanagement.view.VW_AM_GAS_UTILS;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.dbs.common.base.utils.Constant.DEFAULT_SELECTOR;
+import static com.dbs.common.base.utils.Constant.EQUALS_SELECTOR;
+import static org.springframework.data.jpa.domain.Specification.where;
+
+@Repository
+@Transactional(value = "crmTransactionManager")
+public interface ViewGasUtilsRepo extends PagingAndSortingRepository<VW_AM_GAS_UTILS, Integer>, JpaSpecificationExecutor<VW_AM_GAS_UTILS> {
+
+    @SuppressWarnings("unchecked")
+    default Specification<VW_AM_GAS_UTILS> getSpecificationFromFilters(MaterialTablePagingRequest pagingdata, Map<String, Object> filter) {
+        Specification<VW_AM_GAS_UTILS> specification = null;
+        int i = 0;
+        for (String sr : pagingdata.getSearch()) {
+            specification =
+                    i == 0 ?
+                            (Specification<VW_AM_GAS_UTILS>) where(PagingUtils.createSpecification(sr, DEFAULT_SELECTOR))
+                            : specification.and((Specification<VW_AM_GAS_UTILS>) PagingUtils.createSpecification(sr, DEFAULT_SELECTOR));
+            i++;
+        }
+
+        specification = addDefaultFilters(specification, filter, false);
+
+        return specification;
+    }
+
+    default Specification<VW_AM_GAS_UTILS> getSpecificationDefault(Map<String, Object> filter) {
+        Specification<VW_AM_GAS_UTILS> specification = null;
+        specification = addDefaultFilters(specification, filter, true);
+        return specification;
+    }
+
+    @SuppressWarnings("unchecked")
+    default Specification<VW_AM_GAS_UTILS> addDefaultFilters(Specification<VW_AM_GAS_UTILS> specification, Map<String, Object> filter, Boolean isFirst){
+        specification = (Specification<VW_AM_GAS_UTILS>)
+                PagingUtils.createIsDeletedFilter(specification, false, isFirst);
+
+        specification =specification.and((Specification<VW_AM_GAS_UTILS>) PagingUtils.createSpecification("accountId~" + filter.get("accountId"), EQUALS_SELECTOR));
+
+        return specification;
+    }
+
+    Optional<VW_AM_GAS_UTILS> findById(Integer id);
+
+    Optional<VW_AM_GAS_UTILS> findTopByAccountIdAndIsDeletedIsFalseOrderByEffectiveDateDesc(Integer accountId);
+}

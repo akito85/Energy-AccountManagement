@@ -1,0 +1,12 @@
+#PostgreSQL Config
+#mygate.primary.db.driver: org.postgresql.Driver
+#neta.db.url: jdbc:postgresql://172.30.155.137:5432/netabpi
+#mygate.primary.db.url: jdbc:postgresql://localhost:5432/postgres
+#mygate.primary.db.username: postgres
+#mygate.primary.db.password: Passw1rd
+
+#mygate.primary.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+#mygate.primary.hibernate.show_sql: false
+#mygate.primary.hibernate.hbm2ddl.auto: none
+#mygate.primary.entitymanager.packagesToScan: com.os
+#mygate.primary.hibernate.jdbc.batch_size: 100

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.dbs</groupId>
+    <artifactId>dbs-database-crm</artifactId>
+    <version>1.0.0</version>
+    <name>dbs-database-crm</name>
+    <description>CRM Database</description>
+
+  <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.3</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <spring-cloud.version>2020.0.3</spring-cloud.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>11</java.version>
+        <logtash-logback-encoder.version>6.6</logtash-logback-encoder.version>
+        <lombok.version>1.18.24</lombok.version>
+        <maven.surefire.version>2.22.0</maven.surefire.version>
+        <maven.compiler.version>3.8.0</maven.compiler.version>
+        <spring.amqp.version>2.3.1</spring.amqp.version>
+        <spring.boot.admin.version>2.1.0</spring.boot.admin.version>
+        <jwt-version>0.9.1</jwt-version>
+        <jacson.databind>2.17.0</jacson.databind>
+        <commons.version>3.12.0</commons.version>
+        <persistence.api>2.2</persistence.api>
+        <gson>2.8.7</gson>
+        <http.client>4.5.13</http.client>
+        <spring-cloud.version>2020.0.3</spring-cloud.version>
+        <starter.mail>2.7.3</starter.mail>
+        <ooxml.version>5.0.0</ooxml.version>
+        <opencsv.version>5.5.1</opencsv.version>
+        <spring.fox.version>2.9.2</spring.fox.version>
+        <antlr4.version>4.7</antlr4.version>
+        <commons.net.version>3.4</commons.net.version>
+        <httpclient.version>4.5.8</httpclient.version>
+        <jackson-mapper-asl.version>1.9.13</jackson-mapper-asl.version>
+        <validation-api.version>2.0.0.Final</validation-api.version>
+        <hibernate.search.version>6.1.7.Final</hibernate.search.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>21.1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.search</groupId>
+            <artifactId>hibernate-search-mapper-orm</artifactId>
+            <version>${hibernate.search.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.search</groupId>
+            <artifactId>hibernate-search-backend-lucene</artifactId>
+            <version>${hibernate.search.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jacson.databind}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>2.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson-mapper-asl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>${validation-api.version}</version>
+        </dependency>
+<!--        -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dbs</groupId>
+            <artifactId>dbs-common-base</artifactId>
+            <version>1.0.0</version>
+            <!--<scope>compile</scope>--> <!-- ini yang bikin BaseEntities nggak kebaca saat dibuild -->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+</project>

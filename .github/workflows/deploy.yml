@@ -2,8 +2,6 @@ name: Deploy to AKS with Kubeconfig
 on:
   push:
     branches:
-      - main
-      - master
       - account-management-temp
 
 jobs:
@@ -16,12 +14,16 @@ jobs:
         - Development
         - X64
     environment: development
-    env:
-      IMAGE_NAME: registry.pgn.co.id/billing-dev/dbs-module-account
-      IMAGE_TAG: latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+    
+    - name: Temp Authenticate to Docker Registry
+      uses: docker/login-action@v3
+      with:
+        username: "crmadmin"
+        password: "3tAQ8Ev5GkTCuIHXn"
+        registry: "registry.pgn.co.id"
 
     # - name: Authenticate to Docker Registry
     #   uses: docker/login-action@v3
@@ -30,10 +32,27 @@ jobs:
     #     password: ${{ secrets.REGISTRY_PASSWORD }}
     #     registry: ${{ env.REGISTRY_URL }}
 
-    # - name: Build and Push Docker Container
+    - name: Build Java Application
+      run: |
+        docker run --rm \
+          -v "$(pwd):/app" \
+          -w /app \
+          maven:3.9.11-eclipse-temurin-11-alpine \
+          mvn clean install -DskipTests
+
+    - name: Temp Packaging Java To Docker Image and Push to Registry
+      run: |
+        cd dbs-module-account-management/
+        DOCKER_TAG="registry.pgn.co.id/billing-dev/dbs-module-account:1.0.0-alpha"
+        docker build -t "${DOCKER_TAG}" .
+        docker push "${DOCKER_TAG}"
+
+    # - name: Packaging Java To Docker Image and Push to Registry
     #   run: |
-    #     docker build -t $IMAGE_NAME:$IMAGE_TAG .
-    #     docker push $IMAGE_NAME:$IMAGE_TAG
+    #     cd dbs-module-account-management/
+    #     DOCKER_TAG="${{ vars.REGISTRY_URL }}${{ vars.IMAGE_PATH }}:${{ vars.IMAGE_TAG }}"
+    #     docker build -t "${DOCKER_TAG}" .
+    #     docker push "${DOCKER_TAG}"
 
     - name: Set up kubeconfig to access cluster
       run: |
@@ -42,10 +61,57 @@ jobs:
         chmod 600 ~/.kube/config
         kubectl config view
 
-    - name: Test Kubernetes connectivity
+    - name: Temp Test Kubernetes connectivity
       run: |
         kubectl get pods -n energy-development
 
-    - name: Deploy Kubernetes manifests
+    # - name: Test Kubernetes connectivity
+    #   run: |
+    #     kubectl get pods -n ${{ vars.KUBE_NAMESPACE }}
+
+    - name: Temp Registry Authentication
       run: |
-        kubectl apply -f deployment.yaml
+        helm registry login registry.pgn.co.id \
+          -u "crmadmin" \
+          -p "3tAQ8Ev5GkTCuIHXn"
+
+    # - name: Registry Authentication
+    #   run: |
+    #     helm registry login registry.pgn.co.id \
+    #       -u ${{ secrets.REGISTRY_USERNAME }} \
+    #       -p ${{ secrets.REGISTRY_PASSWORD }}
+
+    - name: Temp Deploy Kubernetes manifests
+      run: |
+        helm upgrade --install dbs-module-account oci://registry.pgn.co.id/billing-dev/helm/dbs-module-account/dbs-module-account --version 0.1.0 \
+          --namespace=${{ vars.KUBE_NAMESPACE }} \
+          --set resources.limits.cpu=${{ vars.CPU_LIMIT }} \
+          --set resources.limits.memory=${{ vars.MEMORY_LIMIT }} \
+          --set resources.requests.cpu=${{ vars.CPU_REQUEST }} \
+          --set resources.requests.memory=${{ vars.MEMORY_REQUEST }} \
+          --set serviceAccount.name=${{ vars.VAULT_SERVICE_ACCOUNT }} \
+          --set podAnnotations.vault.authPath=${{ vars.VAULT_AUTH_PATH }} \
+          --set podAnnotations.vault.secretPath=${{ vars.VAULT_CONFIG_PATH }} \
+          --set imagePullSecrets.name=${{ vars.IMAGE_PULL_SECRET }} \
+          --set podAnnotations.releaseNamespace=${{ vars.KUBE_NAMESPACE }} \
+          --set image.name="registry.pgn.co.id/billing-dev/dbs-module-account" \
+          --set image.tag="1.0.0-alpha" \
+          --set podAnnotations.vault.role=${{ vars.VAULT_ROLE }}
+
+    # - name: Deploy Kubernetes manifests
+    #   run: |
+    #     helm upgrade --install dbs-module-account oci://registry.pgn.co.id/billing-dev/helm/dbs-module-account/dbs-module-account --version 0.1.0 \
+    #       --namespace=${{ vars.KUBE_NAMESPACE }} \
+    #       --set resources.limits.cpu=${{ vars.CPU_LIMIT }} \
+    #       --set resources.limits.memory=${{ vars.MEMORY_LIMIT }} \
+    #       --set resources.requests.cpu=${{ vars.CPU_REQUEST }} \
+    #       --set resources.requests.memory=${{ vars.MEMORY_REQUEST }} \
+    #       --set serviceAccount.name=${{ vars.VAULT_SERVICE_ACCOUNT }} \
+    #       --set podAnnotations.vault.authPath=${{ vars.VAULT_AUTH_PATH }} \
+    #       --set podAnnotations.vault.secretPath=${{ vars.VAULT_CONFIG_PATH }} \
+    #       --set imagePullSecrets.name=${{ vars.IMAGE_PULL_SECRET }} \
+    #       --set podAnnotations.releaseNamespace=${{ vars.KUBE_NAMESPACE }} \
+    #       --set image.registry_url=${{ vars.REGISTRY_URL }} \
+    #       --set image.image_path=${{ vars.IMAGE_PATH }} \
+    #       --set image.tag=${{ vars.IMAGE_TAG }} \
+    #       --set podAnnotations.vault.role=${{ vars.ROLE }}
