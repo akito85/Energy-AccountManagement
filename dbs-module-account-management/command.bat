@@ -1,0 +1,14 @@
+helm template dbs-module-account .\dbs-module-account\ --version 0.1.0 ^
+    --namespace=energy-development ^
+    --set resources.limits.cpu=0.25 ^
+    --set resources.limits.memory=1Gi ^
+    --set resources.requests.cpu=0.25 ^
+    --set resources.requests.memory=512Mi ^
+    --set serviceAccount.name=energy-vault ^
+    --set podAnnotations.vault.authPath=auth/energy-development-kubernetes ^
+    --set podAnnotations.vault.secretPath=energy-development/data/db_access ^
+    --set imagePullSecrets.name=pgn-registry ^
+    --set podAnnotations.releaseNamespace=energy-development ^
+    --set image.name="registry.pgn.co.id/billing-dev/dbs-module-account" ^
+    --set image.tag="1.0.0-alpha" ^
+    --set podAnnotations.vault.role=energy > output.yaml
