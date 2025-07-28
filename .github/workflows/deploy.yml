@@ -1,9 +1,8 @@
-name: Deploy to AKS with Kubeconfig
+name: Deploy to Kubernetes Cluster Development
 on:
   push:
     branches:
-      - account-management-temp
-
+      - user-management-temp
 jobs:
   deploy:
     runs-on:
@@ -17,20 +16,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    
-    - name: Temp Authenticate to Docker Registry
-      uses: docker/login-action@v3
-      with:
-        username: "crmadmin"
-        password: "3tAQ8Ev5GkTCuIHXn"
-        registry: "registry.pgn.co.id"
-
-    # - name: Authenticate to Docker Registry
-    #   uses: docker/login-action@v3
-    #   with:
-    #     username: ${{ secrets.REGISTRY_USERNAME }}
-    #     password: ${{ secrets.REGISTRY_PASSWORD }}
-    #     registry: ${{ env.REGISTRY_URL }}
 
     - name: Build Java Application
       run: |
@@ -40,19 +25,13 @@ jobs:
           maven:3.9.11-eclipse-temurin-11-alpine \
           mvn clean install -DskipTests
 
-    - name: Temp Packaging Java To Docker Image and Push to Registry
+    - name: Packaging Java To Docker Image and Push to Registry
       run: |
-        cd dbs-module-account-management/
-        DOCKER_TAG="registry.pgn.co.id/billing-dev/dbs-module-account:1.0.0-alpha"
+        cd dbs-module-account/
+        DOCKER_TAG="${{ vars.IMAGE_NAME }}:1.0.0-alpha"
+        echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login "${{ vars.REGISTRY_URL }}" -u "${{ secrets.REGISTRY_USERNAME }}" --password-stdin
         docker build -t "${DOCKER_TAG}" .
         docker push "${DOCKER_TAG}"
-
-    # - name: Packaging Java To Docker Image and Push to Registry
-    #   run: |
-    #     cd dbs-module-account-management/
-    #     DOCKER_TAG="${{ vars.REGISTRY_URL }}${{ vars.IMAGE_PATH }}:${{ vars.IMAGE_TAG }}"
-    #     docker build -t "${DOCKER_TAG}" .
-    #     docker push "${DOCKER_TAG}"
 
     - name: Set up kubeconfig to access cluster
       run: |
@@ -61,29 +40,31 @@ jobs:
         chmod 600 ~/.kube/config
         kubectl config view
 
-    - name: Temp Test Kubernetes connectivity
+    - name: Test Kubernetes connectivity
       run: |
-        kubectl get pods -n energy-development
+        kubectl get pods -n ${{ vars.KUBE_NAMESPACE }}
 
-    # - name: Test Kubernetes connectivity
-    #   run: |
-    #     kubectl get pods -n ${{ vars.KUBE_NAMESPACE }}
-
-    - name: Temp Registry Authentication
+    - name: Registry Authentication
       run: |
-        helm registry login registry.pgn.co.id \
-          -u "crmadmin" \
-          -p "3tAQ8Ev5GkTCuIHXn"
+        helm registry login ${{ vars.REGISTRY_URL }} \
+          -u ${{ secrets.REGISTRY_USERNAME }} \
+          -p ${{ secrets.REGISTRY_PASSWORD }}
 
-    # - name: Registry Authentication
-    #   run: |
-    #     helm registry login registry.pgn.co.id \
-    #       -u ${{ secrets.REGISTRY_USERNAME }} \
-    #       -p ${{ secrets.REGISTRY_PASSWORD }}
-
-    - name: Temp Deploy Kubernetes manifests
+    # "oci://registry.pgn.co.id/energy/helm/dbs-module-account"
+    # "{{ vars.HELM_CATALOG_APP }}"
+    - name: Push helm to registry
       run: |
-        helm upgrade --install dbs-module-account oci://registry.pgn.co.id/billing-dev/helm/dbs-module-account/dbs-module-account --version 0.1.0 \
+        cd dbs-module-account
+        helm package dbs-module-account
+        helm push ./dbs-module-account-0.1.0.tgz oci://registry.pgn.co.id/energy/helm/dbs-module-account
+
+    # "oci://registry.pgn.co.id/energy/helm/dbs-module-account/dbs-module-account"
+    # "{{ vars.HELM_CATALOG_APP }}/{{ vars.SERVICE_NAME }}"
+    - name: Deploy Kubernetes manifests
+      run: |
+        HELM_CHART_PATH="oci://registry.pgn.co.id/energy/helm/dbs-module-account/dbs-module-account"
+        SERVICE_NAME=""
+        helm upgrade --install dbs-module-account "${HELM_CHART_PATH}" --version 0.1.0 \
           --namespace=${{ vars.KUBE_NAMESPACE }} \
           --set resources.limits.cpu=${{ vars.CPU_LIMIT }} \
           --set resources.limits.memory=${{ vars.MEMORY_LIMIT }} \
@@ -94,24 +75,6 @@ jobs:
           --set podAnnotations.vault.secretPath=${{ vars.VAULT_CONFIG_PATH }} \
           --set imagePullSecrets.name=${{ vars.IMAGE_PULL_SECRET }} \
           --set podAnnotations.releaseNamespace=${{ vars.KUBE_NAMESPACE }} \
-          --set image.name="registry.pgn.co.id/billing-dev/dbs-module-account" \
+          --set image.name=${{ vars.IMAGE_NAME }} \
           --set image.tag="1.0.0-alpha" \
           --set podAnnotations.vault.role=${{ vars.VAULT_ROLE }}
-
-    # - name: Deploy Kubernetes manifests
-    #   run: |
-    #     helm upgrade --install dbs-module-account oci://registry.pgn.co.id/billing-dev/helm/dbs-module-account/dbs-module-account --version 0.1.0 \
-    #       --namespace=${{ vars.KUBE_NAMESPACE }} \
-    #       --set resources.limits.cpu=${{ vars.CPU_LIMIT }} \
-    #       --set resources.limits.memory=${{ vars.MEMORY_LIMIT }} \
-    #       --set resources.requests.cpu=${{ vars.CPU_REQUEST }} \
-    #       --set resources.requests.memory=${{ vars.MEMORY_REQUEST }} \
-    #       --set serviceAccount.name=${{ vars.VAULT_SERVICE_ACCOUNT }} \
-    #       --set podAnnotations.vault.authPath=${{ vars.VAULT_AUTH_PATH }} \
-    #       --set podAnnotations.vault.secretPath=${{ vars.VAULT_CONFIG_PATH }} \
-    #       --set imagePullSecrets.name=${{ vars.IMAGE_PULL_SECRET }} \
-    #       --set podAnnotations.releaseNamespace=${{ vars.KUBE_NAMESPACE }} \
-    #       --set image.registry_url=${{ vars.REGISTRY_URL }} \
-    #       --set image.image_path=${{ vars.IMAGE_PATH }} \
-    #       --set image.tag=${{ vars.IMAGE_TAG }} \
-    #       --set podAnnotations.vault.role=${{ vars.ROLE }}
