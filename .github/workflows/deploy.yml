@@ -27,7 +27,7 @@ jobs:
 
     - name: Packaging Java To Docker Image and Push to Registry
       run: |
-        cd dbs-module-account/
+        cd dbs-module-account-management/
         DOCKER_TAG="${{ vars.IMAGE_NAME }}:1.0.0-alpha"
         echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login "${{ vars.REGISTRY_URL }}" -u "${{ secrets.REGISTRY_USERNAME }}" --password-stdin
         docker build -t "${DOCKER_TAG}" .
@@ -54,7 +54,7 @@ jobs:
     # "{{ vars.HELM_CATALOG_APP }}"
     - name: Push helm to registry
       run: |
-        cd dbs-module-account
+        cd dbs-module-account-management
         helm package dbs-module-account
         helm push ./dbs-module-account-0.1.0.tgz oci://registry.pgn.co.id/energy/helm/dbs-module-account
 
