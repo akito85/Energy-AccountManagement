@@ -50,7 +50,7 @@ jobs:
           -u ${{ secrets.REGISTRY_USERNAME }} \
           -p ${{ secrets.REGISTRY_PASSWORD }}
 
-    # "oci://registry.pgn.co.id/energy/helm/dbs-module-account"
+    # "oci://registry.pgn.co.id/energy/helm/dbs-module-account" #
     # "{{ vars.HELM_CATALOG_APP }}"
     - name: Push helm to registry
       run: |
