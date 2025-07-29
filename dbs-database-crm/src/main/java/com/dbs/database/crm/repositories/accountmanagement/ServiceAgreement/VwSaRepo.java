@@ -78,5 +78,7 @@ public interface VwSaRepo extends PagingAndSortingRepository<VW_SA, Integer>, Jp
     List<VW_SA> findAllByAccountIdAndSaReferenceNumberAndSaTypeAndApprovalStatusInOrderByIdAsc(Integer accountId, String saReferenceNumber, String saType, List<String> status);
 
     List<VW_SA> findAllByAccountIdAndSaReferenceNumberAndSaTypeAndApprovalStatusInAndIdNotOrderByIdAsc(Integer accountId, String saReferenceNumber, String saType, List<String> status, Integer id);
+    
+    Optional<VW_SA> findBySaNumberAndStatus (String saNumb, String status);
 
 }

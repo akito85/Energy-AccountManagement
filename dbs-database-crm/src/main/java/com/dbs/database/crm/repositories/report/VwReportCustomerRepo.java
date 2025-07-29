@@ -5,17 +5,20 @@ import com.dbs.common.base.utils.MaterialTablePagingRequest;
 import com.dbs.common.base.utils.PagingUtils;
 import com.dbs.database.crm.entities.accountmanagement.VW_CUS_INFO_CC;
 import com.dbs.database.crm.entities.report.VW_REPORT_CUSTOMER;
+import com.dbs.database.crm.utils.CostCenterUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.dbs.common.base.utils.Constant.DEFAULT_SELECTOR;
+import static com.dbs.common.base.utils.Constant.*;
+import static com.dbs.common.base.utils.Constant.EQUALS_SELECTOR;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 
@@ -44,14 +47,9 @@ public interface VwReportCustomerRepo extends PagingAndSortingRepository<VW_REPO
 
         return specification;
     }
-
-    default Specification<VW_REPORT_CUSTOMER> getSpecificationDefault(Map<String, Object> filter) {
-        return null;
-    }
-
     default Specification<VW_REPORT_CUSTOMER> getSpecificationFromAdvanceFilters(List<AdvanceFilter> pagingdata, Specification<VW_REPORT_CUSTOMER> specification) {
 //        if(ObjectUtils.isEmpty(specification)){
-//            Specification<VW_CUS_INFO_CC> specification = null;
+//            Specification<VW_REPORT_CUSTOMER> specification = null;
 //        }
         //Add Filter From Front End
         for (AdvanceFilter sr : pagingdata) {
@@ -64,6 +62,7 @@ public interface VwReportCustomerRepo extends PagingAndSortingRepository<VW_REPO
 
         return specification;
     }
+
     default Specification<VW_REPORT_CUSTOMER> getSpecificationFromAdvanceFiltersWithAccount(List<AdvanceFilter> pagingdata, Specification<VW_REPORT_CUSTOMER> specification, List<Integer> customerIdFiltering) {
 //        if(ObjectUtils.isEmpty(specification)){
 //            Specification<VW_CUS_INFO_CC> specification = null;
@@ -84,16 +83,38 @@ public interface VwReportCustomerRepo extends PagingAndSortingRepository<VW_REPO
         return specification;
     }
 
-    default Specification<VW_REPORT_CUSTOMER> addDefaultFilters(Specification<VW_REPORT_CUSTOMER> specification, Map<String, Object> filter, Boolean isFirst) {
-//        Object accIdObj = filter.get("accountId");
-//        if (accIdObj != null) {
-//            int accountId = Integer.parseInt(accIdObj.toString());
-//            specification = (Specification<VW_REPORT_AGREEMENT>) PagingUtils.createAccountIdFilter(specification, accountId, isFirst);
-//
-//            specification = specification == null
-//                    ? (Specification<VW_REPORT_AGREEMENT>) PagingUtils.createSpecification("accountId~" + accountId, DEFAULT_SELECTOR)
-//                    : specification.and((Specification<VW_REPORT_AGREEMENT>) PagingUtils.createSpecification("accountId~" + accountId, DEFAULT_SELECTOR));
+    default Specification<VW_REPORT_CUSTOMER> getSpecificationDefault(Map<String, Object> filter) {
+        Specification<VW_REPORT_CUSTOMER> specification = null;
+        specification = addDefaultFilters(specification, filter, true);
+        return specification;
+    }
+
+    default Specification<VW_REPORT_CUSTOMER> addDefaultFilters(Specification<VW_REPORT_CUSTOMER> specification, Map<String, Object> filter, Boolean isFirst){
+        specification = (Specification<VW_REPORT_CUSTOMER>) PagingUtils.createEntityFilter(specification, Integer.parseInt(filter.get("entityId").toString()), isFirst);
+        if(!ObjectUtils.isEmpty(filter.get("positionId"))){
+            if(specification != null) {
+                specification = specification.and((Specification<VW_REPORT_CUSTOMER>) PagingUtils.createSpecification("positionId"+"~"+filter.get("positionId").toString(),EQUALS_SELECTOR));
+            } else {
+                specification = (Specification<VW_REPORT_CUSTOMER>) PagingUtils.createSpecification("positionId"+"~"+filter.get("positionId").toString(),EQUALS_SELECTOR);
+            }
+
+        }
+        if(filter.get("accountCostCenterId") != null){
+            CostCenterUtils costCenterUtils = new CostCenterUtils();
+            List<Integer> ccList = costCenterUtils.findCostCenterByPositionId(Integer.parseInt(filter.get("accountCostCenterId").toString()), GET_CC_CHILD);
+            if(specification != null) {
+                specification =  specification.and((Specification<VW_REPORT_CUSTOMER>) PagingUtils.createINSpecification("accountCostCenterId", ccList));
+            } else {
+                specification =  (Specification<VW_REPORT_CUSTOMER>) PagingUtils.createINSpecification("accountCostCenterId", ccList);
+            }
+        }
+//        if(!ObjectUtils.isEmpty(filter.get("pagingCustomerCm"))){
+//            specification = specification.and((Specification<VW_REPORT_CUSTOMER>) PagingUtils.createSpecification("pagingCustomerCm"+"~"+filter.get("pagingCustomerCm").toString(),EQUALS_SELECTOR));
 //        }
+//        if(!ObjectUtils.isEmpty(filter.get("pagingCustomerHead"))){
+//            specification = specification.and((Specification<VW_REPORT_CUSTOMER>) PagingUtils.createSpecification("pagingCustomerHead"+"~"+filter.get("pagingCustomerHead").toString(),EQUALS_SELECTOR));
+//        }
+
         return specification;
     }
     Optional<VW_REPORT_CUSTOMER> findById(Integer id);

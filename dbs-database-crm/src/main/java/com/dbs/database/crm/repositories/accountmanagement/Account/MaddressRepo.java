@@ -4,6 +4,7 @@ import static com.dbs.common.base.utils.Constant.DEFAULT_SELECTOR;
 import com.dbs.common.base.utils.MaterialTablePagingRequest;
 import com.dbs.common.base.utils.PagingUtils;
 import com.dbs.database.crm.entities.accountmanagement.M_ADDRESSES;
+import java.util.List;
 
 import java.util.Map;
 import java.util.Optional;
@@ -50,4 +51,6 @@ public interface MaddressRepo extends PagingAndSortingRepository<M_ADDRESSES, In
     M_ADDRESSES findByAddressId(Integer addressId);
     
     Optional<M_ADDRESSES> findByFullAddress(String fullAddress);
+    
+    List<M_ADDRESSES> findAllByFullAddress(String fullAddress);
 }

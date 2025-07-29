@@ -58,11 +58,15 @@ public class VW_REPORT_AGREEMENT extends DefaultBaseEntities {
     private String productName;
     @Column(name = "PRICE_CODE")
     private String priceCode;
+    @Column(name = "BILLING_CYCLE")
+    private String billingCycle;
     @Column(name = "STATUS")
     private String status;
     @Column(name = "SEGMENT")
     private String segment;
     @Column(name = "CUST_TYPE")
     private String custType;
+    @Column(name = "COST_CENTER_ID")
+    private Integer costCenterId;
 
 }

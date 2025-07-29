@@ -3,14 +3,18 @@ package com.dbs.database.crm.repositories.product.promo;
 import com.dbs.database.crm.entities.product.promo.VW_PROMO_TIERING;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 
 
+@Repository
 public class CustomCriteriaTieringRepositoryImpl implements CustomCriteriaTieringRepository {
-    @PersistenceContext
+    @Autowired
+    @Qualifier("crmEntityManagerInstance")
     private EntityManager em;
 
     @Override

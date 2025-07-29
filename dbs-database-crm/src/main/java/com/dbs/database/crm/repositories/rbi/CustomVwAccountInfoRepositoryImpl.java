@@ -15,14 +15,18 @@ import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author RachmatY
  */
+@Repository
 public class CustomVwAccountInfoRepositoryImpl implements CustomVwAccountInfoRepository{
 
-    @PersistenceContext
+    @Autowired
+    @Qualifier("crmEntityManagerInstance")
     private EntityManager em;
 
     @Autowired

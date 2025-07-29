@@ -19,6 +19,8 @@ import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Configuration
 @EnableJpaRepositories(
@@ -81,5 +83,12 @@ public class ShgCrmConfiguration {
                 crmEntityManager().getObject());
         return transactionManager;
     }
+    
+    @Bean(name = "crmEntityManagerInstance")
+    @Primary
+    public EntityManager crmEntityManagerInstance(@Qualifier("crmEntityManager") LocalContainerEntityManagerFactoryBean factoryBean) {
+        return factoryBean.getObject().createEntityManager();
+    }
+    
 
 }

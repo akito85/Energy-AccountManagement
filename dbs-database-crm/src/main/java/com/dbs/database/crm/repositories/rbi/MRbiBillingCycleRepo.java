@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.dbs.common.base.utils.Constant.*;
+import java.util.Optional;
 import static org.springframework.data.jpa.domain.Specification.where;
+import org.springframework.data.jpa.repository.Query;
 
 @Repository
 @Transactional(value= "crmTransactionManager")
@@ -60,4 +62,9 @@ public interface MRbiBillingCycleRepo extends PagingAndSortingRepository<M_RBI_B
     boolean existsByBeginCycleAndEndCycleAndTimeUnit(int beginCycle, int endCycle, String timeUnit);
 
     boolean existsByBillingCycleIdNotAndBeginCycleAndEndCycleAndTimeUnit(Integer billingCycleId, int beginCycle, int endCycle, String timeUnit);
+    
+    @Query(value = "SELECT * " +
+        " FROM M_RBI_BILLING_CYCLE " +
+        " WHERE BEGIN_CYCLE || ' - ' || END_CYCLE || ' '|| TIME_UNIT = :param AND STATUS = :status", nativeQuery = true)
+    Optional<M_RBI_BILLING_CYCLE> findByStatusAndParam(String status, String param);
 }

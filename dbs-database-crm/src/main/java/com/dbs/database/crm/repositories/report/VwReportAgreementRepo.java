@@ -2,7 +2,10 @@ package com.dbs.database.crm.repositories.report;
 
 import com.dbs.common.base.utils.MaterialTablePagingRequest;
 import com.dbs.common.base.utils.PagingUtils;
+import com.dbs.database.crm.entities.ratingbillinginvoice.view.VW_ACCOUNT_INFORMATION;
 import com.dbs.database.crm.entities.report.VW_REPORT_AGREEMENT;
+import com.dbs.database.crm.entities.report.VW_REPORT_CUSTOMER;
+import com.dbs.database.crm.utils.CostCenterUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -14,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.dbs.common.base.utils.Constant.DEFAULT_SELECTOR;
+import static com.dbs.common.base.utils.Constant.GET_CC_CHILD;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 @Repository
@@ -43,10 +47,22 @@ public interface VwReportAgreementRepo extends PagingAndSortingRepository<VW_REP
     }
 
     default Specification<VW_REPORT_AGREEMENT> getSpecificationDefault(Map<String, Object> filter) {
-        return null;
+        Specification<VW_REPORT_AGREEMENT> specification = null;
+        specification = addDefaultFilters(specification, filter, true);
+        return specification;
     }
 
     default Specification<VW_REPORT_AGREEMENT> addDefaultFilters(Specification<VW_REPORT_AGREEMENT> specification, Map<String, Object> filter, Boolean isFirst) {
+        if(filter.get("costCenterId") != null){
+            CostCenterUtils costCenterUtils = new CostCenterUtils();
+            List<Integer> ccList = costCenterUtils.findCostCenterByPositionId(Integer.parseInt(filter.get("costCenterId").toString()), GET_CC_CHILD);
+//            specification = specification.and((Specification<VW_REPORT_AGREEMENT>) PagingUtils.createCostCenterFilterForCostCenterIdColumnName(specification, ccList, false));
+            if(specification != null) {
+                specification =  specification.and((Specification<VW_REPORT_AGREEMENT>) PagingUtils.createINSpecification("costCenterId", ccList));
+            } else {
+                specification =  (Specification<VW_REPORT_AGREEMENT>) PagingUtils.createINSpecification("costCenterId", ccList);
+            }
+        }
 //        Object accIdObj = filter.get("accountId");
 //        if (accIdObj != null) {
 //            int accountId = Integer.parseInt(accIdObj.toString());

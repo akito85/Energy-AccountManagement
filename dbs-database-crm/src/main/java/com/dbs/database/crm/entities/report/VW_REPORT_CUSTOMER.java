@@ -13,16 +13,20 @@ import java.util.Date;
 @Entity
 @Data
 @Table(name = "VW_REPORT_CUSTOMER")
-public class VW_REPORT_CUSTOMER extends DefaultBaseEntities {
+public class VW_REPORT_CUSTOMER {
     @Id
     @Column(name = "SEQUENCE")
     private Integer sequence;
     @Column(name = "CUSTOMER_ID")
     private Integer customerId;
+    @Column(name = "ACCOUNT_COST_CENTER_ID")
+    private Integer accountCostCenterId;
     @Column(name = "ACCOUNT_ID")
     private Integer accountId;
     @Column(name = "CUSTOMER_NUMBER")
     private String customerNumber;
+    @Column(name = "SA_NUMBER")
+    private String saNumber;
     @Column(name = "CUSTOMER_NAME")
     private String customerName;
     @Column(name = "CUSTOMER_TYPE")
@@ -33,6 +37,14 @@ public class VW_REPORT_CUSTOMER extends DefaultBaseEntities {
     private String customerIdentificationType;
     @Column(name = "CUSTOMER_IDENTIFICATION_NUMBER")
     private String customerIdentificationNumber;
+    @Column(name = "FOUNDED_BIRTH_DATE")
+    private String foundedBirthDate;
+    @Column(name = "FOUNDED_BIRTH_PLACE")
+    private String foundedBirthPlace;
+    @Column(name = "MARTIAL_STATUS")
+    private String martialStatus;
+    @Column(name = "SEX")
+    private String sex;
     @Column(name = "CUSTOMER_DESCRIPTION")
     private String customerDescription;
     @Column(name = "SOR")
@@ -209,5 +221,29 @@ public class VW_REPORT_CUSTOMER extends DefaultBaseEntities {
     private String isBadDebt;
     @Column(name = "IS_SYNC")
     private String isSync;
+    @Column(name = "CREATED_BY")
+    private String createdBy;
+
+    @Column(name = "UPDATED_BY")
+    private String updatedBy;
+
+    @Column(name = "CREATED_DATE")
+    private String createdDate;
+
+    @Column(name = "UPDATED_DATE")
+    private String updatedDate;
+
+    @Column(name = "ENTITY_ID")
+    private Integer entityId;
+    @Column(name = "COST_CENTER_ID")
+    private Integer ccId;
+    @Column(name = "POSITION_ID")
+    private Integer positionId;
+
+//    @Column(name = "ACCOUNT_COST_CENTER_ID")
+//    private Integer accountCostCenterId;
+
+    @Column(name = "CUSTOMER_MANAGEMENT")
+    private String customerManagement;
 
 }

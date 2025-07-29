@@ -18,6 +18,9 @@ public class VW_CUS_INFO_CC extends BaseEntities implements Serializable {
     @Column(name = "ID")
     private Integer customerId;
 
+    @Column(name = "ACCOUNT_ID")
+    private Integer accountId;
+
     @Column(name="UNIQUE_CUSTOMER")
     private String uniqueCustomer;
 
@@ -78,7 +81,7 @@ public class VW_CUS_INFO_CC extends BaseEntities implements Serializable {
     @Column(name="CUSTOMER_IDENTIFICATION_NUMBER")
     private String customerIdentificationNumber;
 
-    @Column(name="CM_POSITION_ID")
+    @Column(name="CMPOSITIONID")
     private Integer cmPositionId;
 
     @Column(name = "DESCRIPTION")
