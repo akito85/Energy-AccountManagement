@@ -50,21 +50,24 @@ jobs:
           -u ${{ secrets.REGISTRY_USERNAME }} \
           -p ${{ secrets.REGISTRY_PASSWORD }}
 
-    # "oci://registry.pgn.co.id/energy/helm/dbs-module-account" #
-    # "{{ vars.HELM_CATALOG_APP }}"
+    # HELM_CATALOG_APP="oci://registry.pgn.co.id/energy/helm/dbs-module-account" #
+    # HELM_NAME="dbs-module-account"
     - name: Push helm to registry
       run: |
         cd dbs-module-account-management
-        helm package dbs-module-account
-        helm push ./dbs-module-account-0.1.0.tgz oci://registry.pgn.co.id/energy/helm/dbs-module-account
+        HELM_CATALOG_APP="${{ vars.HELM_CATALOG_APP }}"
+        HELM_NAME="${{ vars.HELM_NAME }}"
+        helm package "${HELM_CATALOG_APP}"
+        PREPARED_HELM_TO_PUSH="${{ vars.HELM_CATALOG_APP }}-0.1.0.tgz"
+        helm push "./${PREPARED_HELM_TO_PUSH}" "${HELM_NAME}"
 
-    # "oci://registry.pgn.co.id/energy/helm/dbs-module-account/dbs-module-account"
-    # "{{ vars.HELM_CATALOG_APP }}/{{ vars.SERVICE_NAME }}"
+    # HELM_CHART_PATH="oci://registry.pgn.co.id/energy/helm/dbs-module-account/dbs-module-account"
+    # HELM_NAME="dbs-module-account"
     - name: Deploy Kubernetes manifests
       run: |
-        HELM_CHART_PATH="oci://registry.pgn.co.id/energy/helm/dbs-module-account/dbs-module-account"
-        SERVICE_NAME=""
-        helm upgrade --install dbs-module-account "${HELM_CHART_PATH}" --version 0.1.0 \
+        HELM_CHART_PATH="{{ vars.HELM_CATALOG_APP }}/{{ vars.HELM_NAME }}"
+        HELM_NAME="{{ vars.HELM_NAME }}"
+        helm upgrade --install "${HELM_NAME}" "${HELM_CHART_PATH}" --version 0.1.0 \
           --namespace=${{ vars.KUBE_NAMESPACE }} \
           --set resources.limits.cpu=${{ vars.CPU_LIMIT }} \
           --set resources.limits.memory=${{ vars.MEMORY_LIMIT }} \
