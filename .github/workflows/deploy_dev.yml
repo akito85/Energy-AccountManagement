@@ -1,0 +1,85 @@
+name: Deploy to Kubernetes Cluster Development
+on:
+  pull_request:
+    branches:
+      - dev
+    types:
+      - closed
+jobs:
+  deploy:
+    runs-on:
+      group: Development
+      labels:
+        - self-hosted
+        - Linux
+        - Development
+        - X64
+    environment: development
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build Java Application
+      run: |
+        docker run --rm \
+          -v "$(pwd):/app" \
+          -w /app \
+          maven:3.9.11-eclipse-temurin-11-alpine \
+          mvn clean install -DskipTests
+
+    - name: Packaging Java To Docker Image and Push to Registry
+      run: |
+        cd dbs-module-account-management/
+        DOCKER_TAG="${{ vars.IMAGE_NAME }}:1.0.0-alpha"
+        echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login "${{ vars.REGISTRY_URL }}" -u "${{ secrets.REGISTRY_USERNAME }}" --password-stdin
+        docker build -t "${DOCKER_TAG}" .
+        docker push "${DOCKER_TAG}"
+
+    - name: Set up kubeconfig to access cluster
+      run: |
+        mkdir -p ~/.kube
+        echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > ~/.kube/config
+        chmod 600 ~/.kube/config
+        kubectl config view
+
+    - name: Test Kubernetes connectivity
+      run: |
+        kubectl get pods -n ${{ vars.KUBE_NAMESPACE }}
+
+    - name: Registry Authentication
+      run: |
+        helm registry login ${{ vars.REGISTRY_URL }} \
+          -u ${{ secrets.REGISTRY_USERNAME }} \
+          -p ${{ secrets.REGISTRY_PASSWORD }}
+
+    # HELM_CATALOG_APP="oci://registry.pgn.co.id/energy/helm/dbs-module-account" #
+    # HELM_NAME="dbs-module-account"
+    - name: Push helm to registry
+      run: |
+        cd dbs-module-account-management
+        HELM_CATALOG_APP="${{ vars.HELM_CATALOG_APP }}"
+        HELM_NAME="${{ vars.HELM_NAME }}"
+        helm package "${HELM_CATALOG_APP}"
+        PREPARED_HELM_TO_PUSH="${{ vars.HELM_CATALOG_APP }}-0.1.0.tgz"
+        helm push "./${PREPARED_HELM_TO_PUSH}" "${HELM_NAME}"
+
+    # HELM_CHART_PATH="oci://registry.pgn.co.id/energy/helm/dbs-module-account/dbs-module-account"
+    # HELM_NAME="dbs-module-account"
+    - name: Deploy Kubernetes manifests
+      run: |
+        HELM_CHART_PATH="${{ vars.HELM_NAME }}/${{ vars.HELM_CATALOG_APP }}"
+        HELM_CATALOG_APP="${{ vars.HELM_CATALOG_APP }}"
+        helm upgrade --install "${HELM_CATALOG_APP}" "${HELM_CHART_PATH}" --version 0.1.0 \
+          --namespace=${{ vars.KUBE_NAMESPACE }} \
+          --set resources.limits.cpu=${{ vars.CPU_LIMIT }} \
+          --set resources.limits.memory=${{ vars.MEMORY_LIMIT }} \
+          --set resources.requests.cpu=${{ vars.CPU_REQUEST }} \
+          --set resources.requests.memory=${{ vars.MEMORY_REQUEST }} \
+          --set serviceAccount.name=${{ vars.VAULT_SERVICE_ACCOUNT }} \
+          --set podAnnotations.vault.authPath=${{ vars.VAULT_AUTH_PATH }} \
+          --set podAnnotations.vault.secretPath=${{ vars.VAULT_CONFIG_PATH }} \
+          --set imagePullSecrets.name=${{ vars.IMAGE_PULL_SECRET }} \
+          --set podAnnotations.releaseNamespace=${{ vars.KUBE_NAMESPACE }} \
+          --set image.name=${{ vars.IMAGE_NAME }} \
+          --set image.tag="1.0.0-alpha" \
+          --set podAnnotations.vault.role=${{ vars.VAULT_ROLE }}
