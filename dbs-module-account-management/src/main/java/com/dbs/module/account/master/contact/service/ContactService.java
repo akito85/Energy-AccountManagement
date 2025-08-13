@@ -107,6 +107,8 @@ public class ContactService {
 
     @Autowired
     private VwContactRepo vwContactRepo;
+    @Autowired
+    private GlobalTypeValueService globalTypeValueService;
 
     @SuppressWarnings({"java:S3776","java:S1192"})
     @Transactional(rollbackFor = Exception.class, readOnly = false)
@@ -146,8 +148,8 @@ public class ContactService {
         newContact.setCreatedDate(new Date());
         newContact.setCreatedBy(UserDetailUtils.getUsername());
         cRepo.save(newContact);
-
-        Integer partyId = party.createParty(CreateParty.CONTACT, newContact.getContactId().toString(), newContact.getContactName(), newContact.getContactName(), UserDetailUtils.getUserEntity());
+        R_GLOBAL_TYPE_VALUE glbValue = globalTypeValueService.getGlobalTypeByGlbValue("Party Type", CreateParty.CONTACT);
+        Integer partyId = party.createParty(glbValue.getGlbValue(), newContact.getContactId().toString(), newContact.getContactName(), newContact.getContactName(), UserDetailUtils.getUserEntity());
 
         newContact.setPartyId(partyId);
         cRepo.save(newContact);

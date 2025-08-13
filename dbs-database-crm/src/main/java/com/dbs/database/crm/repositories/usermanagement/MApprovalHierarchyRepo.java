@@ -69,9 +69,9 @@ public interface MApprovalHierarchyRepo extends PagingAndSortingRepository<M_APP
 
     List<M_APPROVAL_HIERARCHY> findAll();
     
-    @Query(value = "SELECT maph.* FROM M_APPROVAL_HIERARCHY maph INNER JOIN M_APPROVAL_HIERARCHY_DTL maphd ON maph.APPHIER_ID = maphd.APPHIER_ID WHERE maph.STATUS = 'ACTIVE' AND maphd.POSITION_ID = :positionId AND maphd.IS_SUBMITTER = :isSubmitter AND lower(APPROVAL_TYPE) = :approvalType", nativeQuery = true)
+    @Query(value = "SELECT maph.* FROM M_APPROVAL_HIERARCHY maph INNER JOIN M_APPROVAL_HIERARCHY_DTL maphd ON maph.APPHIER_ID = maphd.APPHIER_ID WHERE maph.STATUS = 'ACTIVE' AND maphd.POSITION_ID = :positionId AND maphd.IS_SUBMITTER = :isSubmitter AND maph.APPROVAL_TYPE = :approvalType", nativeQuery = true)
     List<M_APPROVAL_HIERARCHY> findApprovalHierarchyByPosition(Integer positionId, String isSubmitter, String approvalType);
 
-    @Query(value = "SELECT maph.* FROM M_APPROVAL_HIERARCHY maph INNER JOIN M_APPROVAL_HIERARCHY_DTL maphd ON maph.APPHIER_ID = maphd.APPHIER_ID WHERE maph.STATUS = 'ACTIVE' AND maphd.POSITION_ID = :positionId AND maphd.IS_SUBMITTER = :isSubmitter AND APPROVAL_TYPE = :approvalType", nativeQuery = true)
+    @Query(value = "SELECT maph.* FROM M_APPROVAL_HIERARCHY maph INNER JOIN M_APPROVAL_HIERARCHY_DTL maphd ON maph.APPHIER_ID = maphd.APPHIER_ID WHERE maph.STATUS = 'ACTIVE' AND maphd.POSITION_ID = :positionId AND maphd.IS_SUBMITTER = :isSubmitter AND maph.APPROVAL_TYPE = :approvalType", nativeQuery = true)
     List<M_APPROVAL_HIERARCHY> findApprovalHierarchyByPositionAndType(Integer positionId, String isSubmitter, String approvalType);
 }

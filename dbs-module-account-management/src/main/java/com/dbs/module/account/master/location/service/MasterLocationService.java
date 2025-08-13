@@ -704,7 +704,8 @@ public class MasterLocationService {
     public ResponseEntity<ResponseObject> getLocationParentType(Integer locationTypeId){
         ResponseObject result;
         try {
-            List<R_GLOBAL_TYPE_VALUE> listLocationType = rGlobalTypeValueRepo.findAllByGlobalType(23);
+            List<R_GLOBAL_TYPE_VALUE> listLocationType = globalTypeService.getDetailGlobalType("Location Type");
+//                    rGlobalTypeValueRepo.findAllByGlobalType(23);
             if (listLocationType.isEmpty()){
                 return new ResponseEntity<>(new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.NOT_FOUND,
                         ResponseUtils.MESSAGE_NOT_FOUND, null), HttpStatus.NOT_FOUND);

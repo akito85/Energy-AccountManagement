@@ -302,7 +302,8 @@ public class MasterAssetsService {
 
         try {
 
-            List<R_GLOBAL_TYPE_VALUE> data = rGlobalTypeValueRepo.findByGlobalType(602);
+            List<R_GLOBAL_TYPE_VALUE> data = globalTypeService.getDetailGlobalType("Service Type");
+//                    rGlobalTypeValueRepo.findByGlobalType(602);
             result.setSuccess(true);
             result.setCode(HttpStatus.OK);
             result.setMessage("Success Get List Service Type");

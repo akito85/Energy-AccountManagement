@@ -61,9 +61,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          {{- if .Values.podAnnotations.vault.enabled }}
           env:
             - name: SPRING_CONFIG_ADDITIONAL_LOCATION
               value: "file:/vault/secrets/db-access.properties"
+          {{- end }}
           livenessProbe:
             tcpSocket:
               port: {{.Values.service.port }}

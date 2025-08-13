@@ -3,7 +3,6 @@ package com.dbs.database.crm.repositories.report;
 import com.dbs.common.base.utils.AdvanceFilter;
 import com.dbs.common.base.utils.MaterialTablePagingRequest;
 import com.dbs.common.base.utils.PagingUtils;
-import com.dbs.database.crm.entities.accountmanagement.VW_CUS_INFO_CC;
 import com.dbs.database.crm.entities.report.VW_REPORT_CUSTOMER;
 import com.dbs.database.crm.utils.CostCenterUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.dbs.common.base.utils.Constant.*;
-import static com.dbs.common.base.utils.Constant.EQUALS_SELECTOR;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 
@@ -108,12 +106,12 @@ public interface VwReportCustomerRepo extends PagingAndSortingRepository<VW_REPO
                 specification =  (Specification<VW_REPORT_CUSTOMER>) PagingUtils.createINSpecification("accountCostCenterId", ccList);
             }
         }
-//        if(!ObjectUtils.isEmpty(filter.get("pagingCustomerCm"))){
-//            specification = specification.and((Specification<VW_REPORT_CUSTOMER>) PagingUtils.createSpecification("pagingCustomerCm"+"~"+filter.get("pagingCustomerCm").toString(),EQUALS_SELECTOR));
-//        }
-//        if(!ObjectUtils.isEmpty(filter.get("pagingCustomerHead"))){
-//            specification = specification.and((Specification<VW_REPORT_CUSTOMER>) PagingUtils.createSpecification("pagingCustomerHead"+"~"+filter.get("pagingCustomerHead").toString(),EQUALS_SELECTOR));
-//        }
+        if(!ObjectUtils.isEmpty(filter.get("pagingCustomerCm"))){
+            specification = specification.and((Specification<VW_REPORT_CUSTOMER>) PagingUtils.createSpecification("pagingCustomerCm"+"~"+filter.get("pagingCustomerCm").toString(),EQUALS_SELECTOR));
+        }
+        if(!ObjectUtils.isEmpty(filter.get("pagingCustomerHead"))){
+            specification = specification.and((Specification<VW_REPORT_CUSTOMER>) PagingUtils.createSpecification("pagingCustomerHead"+"~"+filter.get("pagingCustomerHead").toString(),EQUALS_SELECTOR));
+        }
 
         return specification;
     }

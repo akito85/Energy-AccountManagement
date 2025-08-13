@@ -1,13 +1,11 @@
 package com.dbs.database.crm.entities.report;
 
-import com.dbs.common.base.entities.DefaultBaseEntities;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -17,7 +15,13 @@ public class VW_REPORT_CUSTOMER {
     @Id
     @Column(name = "SEQUENCE")
     private Integer sequence;
-    @Column(name = "CUSTOMER_ID")
+    @Column(name = "UNIQUE_CUSTOMER")
+    private String uniqueCustomer;
+    @Column(name = "PAGING_CUSTOMER_CM")
+    private String pagingCustomerCm;
+    @Column(name = "PAGING_CUSTOMER_HEAD")
+    private String CUSTOMER_ID;
+    @Column(name = "customerId")
     private Integer customerId;
     @Column(name = "ACCOUNT_COST_CENTER_ID")
     private Integer accountCostCenterId;

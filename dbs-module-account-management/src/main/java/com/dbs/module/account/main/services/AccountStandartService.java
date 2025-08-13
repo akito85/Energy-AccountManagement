@@ -780,9 +780,9 @@ public class AccountStandartService {
                 mCustomer.setCreatedBy(UserDetailUtils.getUsername());
                 mCustomer.setCreatedDate(new Date());
                 mCustomerRepo.save(mCustomer);
-
+                R_GLOBAL_TYPE_VALUE glbValue = globalTypeValueService.getGlobalTypeByGlbValue("Party Type", CreateParty.CUSTOMER);
                 // SAVED PARTY CUSTOMER
-                Integer partyIdCustomer = party.createParty(CreateParty.CUSTOMER, mCustomer.getCustomerId().toString(), mCustomer.getCustomerIdentificationNumber(), mCustomer.getCustomerName(), UserDetailUtils.getUserEntity());
+                Integer partyIdCustomer = party.createParty(glbValue.getGlbValue(), mCustomer.getCustomerId().toString(), mCustomer.getCustomerIdentificationNumber(), mCustomer.getCustomerName(), UserDetailUtils.getUserEntity());
                 mCustomer.setPartyId(partyIdCustomer);
                 mCustomerRepo.save(mCustomer);
                 allData.put("customer", mCustomer);
@@ -832,7 +832,8 @@ public class AccountStandartService {
             mAccountRepo.save(mAccount);
 
             // SAVED PARTY ACCOUNT
-            Integer partyIdAccount = party.createParty(CreateParty.ACCOUNT, mAccount.getAccountId().toString(), mAccount.getAccountNumber(), mAccount.getAccountName(), UserDetailUtils.getUserEntity());
+            R_GLOBAL_TYPE_VALUE glbValue = globalTypeValueService.getGlobalTypeByGlbValue("Party Type", CreateParty.ACCOUNT);
+            Integer partyIdAccount = party.createParty(glbValue.getGlbValue(), mAccount.getAccountId().toString(), mAccount.getAccountNumber(), mAccount.getAccountName(), UserDetailUtils.getUserEntity());
             mAccount.setPartyId(partyIdAccount);
             mAccountRepo.save(mAccount);
             allData.put("account", mAccount);
@@ -868,50 +869,58 @@ public class AccountStandartService {
             }
 
             // ADD BUSINESS PURPOSES TAX
+            Optional<R_GLOBAL_TYPE_VALUE> rBp = globalTypeValueService.getOptionalGlobalTypeByGlbValue("Business Purpose",
+                "TAX");
             if(dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().contains("TEMP")){
                 String idTaxTemp = dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().replaceAll("TEMP", "");
                 if(idTaxTemp.equals("1")) {
                     List<Integer> bA1 = dto.getAccountAddress().getAddress1().getBusinessPurpose();
-                    bA1.add(162);
+                    bA1.add(rBp.get().getGlbTypeValId());
                     dto.getAccountAddress().getAddress1().setBusinessPurpose(bA1);
                 } else if(idTaxTemp.equals("2")) {
                     List<Integer> bA1 = dto.getAccountAddress().getAddress2().getBusinessPurpose();
-                    bA1.add(162);
+                    bA1.add(rBp.get().getGlbTypeValId());
                     dto.getAccountAddress().getAddress2().setBusinessPurpose(bA1);
                 } else if(idTaxTemp.equals("3")) {
                     List<Integer> bA1 = dto.getAccountAddress().getAddress3().getBusinessPurpose();
-                    bA1.add(162);
+                    bA1.add(rBp.get().getGlbTypeValId());
                     dto.getAccountAddress().getAddress3().setBusinessPurpose(bA1);
                 } else if(idTaxTemp.equals("4")) {
                     List<Integer> bA1 = dto.getAccountAddress().getAddress4().getBusinessPurpose();
-                    bA1.add(162);
+                    bA1.add(rBp.get().getGlbTypeValId());
                     dto.getAccountAddress().getAddress4().setBusinessPurpose(bA1);
                 }
             } else if(StringUtils.hasValue(dto.getAccountAddress().getAddress1()) && StringUtils.hasValue(dto.getAccountAddress().getAddress1().getAddressId()) && dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().equalsIgnoreCase(dto.getAccountAddress().getAddress1().getAddressId().toString())) {
                 List<Integer> bA1 = dto.getAccountAddress().getAddress1().getBusinessPurpose();
-                bA1.add(162);
+                bA1.add(rBp.get().getGlbTypeValId());
                 dto.getAccountAddress().getAddress1().setBusinessPurpose(bA1);
             } else if(StringUtils.hasValue(dto.getAccountAddress().getAddress2()) && StringUtils.hasValue(dto.getAccountAddress().getAddress2().getAddressId()) && dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().equalsIgnoreCase(dto.getAccountAddress().getAddress2().getAddressId().toString())) {
                 List<Integer> bA1 = dto.getAccountAddress().getAddress2().getBusinessPurpose();
-                bA1.add(162);
+                bA1.add(rBp.get().getGlbTypeValId());
                 dto.getAccountAddress().getAddress2().setBusinessPurpose(bA1);
             } else if(StringUtils.hasValue(dto.getAccountAddress().getAddress3()) && StringUtils.hasValue(dto.getAccountAddress().getAddress3().getAddressId()) && dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().equalsIgnoreCase(dto.getAccountAddress().getAddress3().getAddressId().toString())) {
                 List<Integer> bA1 = dto.getAccountAddress().getAddress3().getBusinessPurpose();
-                bA1.add(162);
+                bA1.add(rBp.get().getGlbTypeValId());
                 dto.getAccountAddress().getAddress3().setBusinessPurpose(bA1);
             } else if(StringUtils.hasValue(dto.getAccountAddress().getAddress4()) && StringUtils.hasValue(dto.getAccountAddress().getAddress4().getAddressId()) && dto.getFinancialInformation().getTaxIdentifier().getTaxAddress().equalsIgnoreCase(dto.getAccountAddress().getAddress4().getAddressId().toString())) {
                 List<Integer> bA1 = dto.getAccountAddress().getAddress4().getBusinessPurpose();
-                bA1.add(162);
+                bA1.add(rBp.get().getGlbTypeValId());
                 dto.getAccountAddress().getAddress4().setBusinessPurpose(bA1);
             }
 
             // STEP ADDRESS
             List<Integer> saveIdAd = new ArrayList<>();
             Integer savedAddress;
+            Optional<R_GLOBAL_TYPE_VALUE> rBpBillTo = globalTypeValueService
+                .getOptionalGlobalTypeByGlbValue("Business Purpose", "BILL_TO");
+            Optional<R_GLOBAL_TYPE_VALUE> rBpShipTo = globalTypeValueService
+                .getOptionalGlobalTypeByGlbValue("Business Purpose", "SHIP_TO");
             for(AccountAddressCreateDTO accountAddress : allDataAddressCreate){
                 savedAddress = 0;
-                Optional<Integer> bpShipTo = accountAddress.getBusinessPurpose().stream().filter(e->e.equals(166)).findAny();
-                Optional<Integer> bpBillTo = accountAddress.getBusinessPurpose().stream().filter(e->e.equals(167)).findAny();
+                Optional<Integer> bpShipTo = accountAddress.getBusinessPurpose().stream()
+                    .filter(e -> e.equals(rBpShipTo.get().getGlbTypeValId())).findAny();
+                Optional<Integer> bpBillTo = accountAddress.getBusinessPurpose().stream()
+                    .filter(e -> e.equals(rBpBillTo.get().getGlbTypeValId())).findAny();
                 int next = 0;
                 for (Integer bp : accountAddress.getBusinessPurpose()) {
                     if(savedAddress<1) {
@@ -948,7 +957,7 @@ public class AccountStandartService {
                     // SAVED ACCOUNT ADDRESS
                     M_ACCOUNT_ADDRESS accAddress = new M_ACCOUNT_ADDRESS();
                     // CEK PRIMARY FLAG & PREMISE FLAG
-                    if (bpShipTo.isPresent() && bp.equals(166)) {
+                    if (bpShipTo.isPresent() && bp.equals(rBpShipTo.get().getGlbTypeValId())) {
                         accAddress.setPremiseFlag(Boolean.TRUE);
                     } else {
                         if (bpShipTo.isEmpty() && next == 0) {
@@ -957,7 +966,7 @@ public class AccountStandartService {
                             accAddress.setPremiseFlag(Boolean.FALSE);
                         }
                     }
-                    if (bpBillTo.isPresent() && bp.equals(167)) {
+                    if (bpBillTo.isPresent() && bp.equals(rBpBillTo.get().getGlbTypeValId())) {
                         accAddress.setPrimaryFlag(Boolean.TRUE);
                     } else {
                         if (bpShipTo.isEmpty() && next == 0) {
@@ -1014,7 +1023,8 @@ public class AccountStandartService {
                     mContactRepo.save(mContact);
 
                     // SAVED PARTY CONTACT
-                    Integer partyIdContact = party.createParty(CreateParty.CONTACT, mContact.getContactId().toString(), mContact.getContactName(), mContact.getContactName(), UserDetailUtils.getUserEntity());
+                    R_GLOBAL_TYPE_VALUE glbValContact = globalTypeValueService.getGlobalTypeByGlbValue("Party Type", CreateParty.CONTACT);
+                    Integer partyIdContact = party.createParty(glbValContact.getGlbValue(), mContact.getContactId().toString(), mContact.getContactName(), mContact.getContactName(), UserDetailUtils.getUserEntity());
                     mContact.setPartyId(partyIdContact);
                     mContactRepo.save(mContact);
 

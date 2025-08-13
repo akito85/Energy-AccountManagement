@@ -1,0 +1,283 @@
+package com.dbs.database.crm.entities.summary;
+
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.Date;
+
+@Entity
+@Data
+@Table(name = "VW_SUMMARY_ACCOUNT")
+public class VW_SUMMARY_ACCOUNT {
+    @Id
+    @Column(name = "SEQUENCE")
+    private Integer sequence;
+    @Column(name = "UNIQUE_ACCOUNT")
+    private String uniqueAccount;
+    @Column(name = "ENTITY_ID")
+    private Integer entityId;
+    @Column(name = "COST_CENTER_ID")
+    private Integer costCenterId;
+    @Column(name = "CUSTOMER_MANAGEMENT_ID")
+    private Integer customerManagementId;
+    @Column(name = "CUSTOMER_ID")
+    private Integer customerId;
+
+    @Column(name = "CUSTOMER_NUMBER")
+    private String customerNumber;
+    @Column(name = "IDENTIFICATION_TYPE")
+    private String identificationType;
+    @Column(name = "CUSTOMER_IDENTIFICATION_NUMBER")
+    private String customerIdentificationNumber;
+    @Column(name = "CUSTOMER_NAME")
+    private String customerName;
+    @Column(name = "CUSTOMER_TYPE")
+    private String customerType;
+    @Column(name = "FOUNDED_BIRTH_DATE")
+    private Date foundedBirthDate;
+    @Column(name = "FOUNDED_BIRTH_PLACE")
+    private String foundedBirthPlace;
+    @Column(name = "SEX")
+    private String sex;
+    @Column(name = "MARTIAL_STATUS")
+    private String martialStatus;
+    @Column(name = "SEARCH_KEY")
+    private String searchKey;
+    @Column(name = "CUSTOMER_STATUS")
+    private String customerStatus;
+    @Column(name = "CUSTOMER_DESCRIPTION")
+    private String customerDescription;
+
+
+    @Column(name = "ACCOUNT_NUMBER")
+    private String accountNumber;
+    @Column(name = "REGISTRATION_NUMBER")
+    private String registrationNumber;
+    @Column(name = "ACCOUNT_NAME")
+    private String accountName;
+    @Column(name = "ACCOUNT_CATEGORY")
+    private String accountCategory;
+    @Column(name = "ACCOUNT_GROUP")
+    private String accountGroup;
+    @Column(name = "ACCOUNT_REFERENCE_ID")
+    private String accountReferenceId;
+    @Column(name = "CUSTOMER_MANAGEMENT")
+    private String customerManagement;
+    @Column(name = "ACCOUNT_STATUS")
+    private String accountStatus;
+    @Column(name = "ACCOUNT_DESCRIPTION")
+    private String accountDescription;
+    @Column(name = "SOR")
+    private String sor;
+    @Column(name = "COST_CENTER")
+    private String costCenter;
+    @Column(name = "METER_READING_CODE")
+    private String meterReadingCode;
+    @Column(name = "ACCOUNT_SEGMENT")
+    private String accountSegment;
+    @Column(name = "ACCOUNT_GROUP_TYPE")
+    private String accountGroupType;
+    @Column(name = "ACCOUNT_TYPE")
+    private String accountType;
+    @Column(name = "CLASSIFICATION_TYPE")
+    private String classificationType;
+    @Column(name = "PRIORITY")
+    private String priority;
+    @Column(name = "IS_CORPORATE")
+    private String isCorporate;
+    @Column(name = "IS_EXCEPTION")
+    private String isException;
+    @Column(name = "INDUSTRIAL_SECTOR")
+    private String industrialSector;
+    @Column(name = "BUDGET")
+    private String budget;
+    @Column(name = "BUDGET_YEAR")
+    private String budgetYear;
+    @Column(name = "TERITORY")
+    private String teritory;
+
+
+    @Column(name = "ADDRESS")
+    private String address;
+    @Column(name = "ADDRESS_TYPE")
+    private String addressType;
+    @Column(name = "BUILDING")
+    private String building;
+    @Column(name = "FLOOR")
+    private String floor;
+    @Column(name = "HOUSE_NAME")
+    private String houseName;
+    @Column(name = "STREET_NAME")
+    private String streetName;
+    @Column(name = "BLOCK")
+    private String block;
+    @Column(name = "HOUSE_NUMBER")
+    private String houseNumber;
+    @Column(name = "RT")
+    private String rt;
+    @Column(name = "RW")
+    private String rw;
+    @Column(name = "POSTAL_CODE")
+    private String postalCode;
+    @Column(name = "SUB_DISTRICT")
+    private String subDistrict;
+    @Column(name = "DISTRICT")
+    private String district;
+    @Column(name = "CITY")
+    private String city;
+    @Column(name = "PROVINCE")
+    private String province;
+    @Column(name = "COUNTRY")
+    private String country;
+    @Column(name = "BUSINESS_PURPOSE")
+    private String businessPurpose;
+    @Column(name = "PREMISE")
+    private String premise;
+    @Column(name = "CONTACT_NAME")
+    private String contactName;
+    @Column(name = "JOB_NAME")
+    private String jobName;
+    @Column(name = "POSITION_NAME")
+    private String positionName;
+    @Column(name = "CONTACT_ADDRESS")
+    private String contactAddress;
+    @Column(name = "FIRST_NAME")
+    private String firstName;
+    @Column(name = "MIDDLE_NAME")
+    private String middleName;
+    @Column(name = "LAST_NAME")
+    private String lastName;
+    @Column(name = "EMAIL")
+    private String email;
+    @Column(name = "WEBSITE")
+    private String website;
+    @Column(name = "WHATSAPP")
+    private String whatsapp;
+    @Column(name = "PHONE")
+    private String phone;
+    @Column(name = "MOBILE_PHONE")
+    private String mobilePhone;
+    @Column(name = "FAXNUMBER")
+    private String faxnumber;
+    @Column(name = "PGN_MOBILE")
+    private String pgnMobile;
+    @Column(name = "MEDIA")
+    private String media;
+    @Column(name = "START_DATE")
+    private Date startDate;
+    @Column(name = "END_DATE")
+    private Date endDate;
+
+
+    @Column(name = "PAYMENT_CHANNEL")
+    private String paymentChannel;
+    @Column(name = "TAX_IDENTIFIER_TYPE")
+    private String taxIdentifierType;
+    @Column(name = "TAX_IDENTIFIER_NUMBER")
+    private String taxIdentifierNumber;
+    @Column(name = "TAX_IDENTIFIER_NAME")
+    private String taxIdentifierName;
+    @Column(name = "TAX_IDENTIFIER_ADDRESS")
+    private String taxIdentifierAddress;
+    @Column(name = "RECEIVABLE_ACCOUNT")
+    private String receivableAccount;
+    @Column(name = "REVENUE_ACCOUNT")
+    private String revenueAccount;
+    @Column(name = "BILLING_BUCKET_CODE")
+    private String billingBucketCode;
+    @Column(name = "BILLING_BUCKET_NAME")
+    private String billingBucketName;
+    @Column(name = "PPN")
+    private String ppn;
+    @Column(name = "PPH")
+    private String pph;
+
+    @Column(name = "PREMISE_ADDRESS")
+    private String premiseAddress;
+
+    @Column(name = "SA_NUMBER")
+    private String saNumber;
+    @Column(name = "SA_REFERENCE_NUMBER")
+    private String saReferenceNumber;
+    @Column(name = "SERVICE_TYPE")
+    private String serviceType;
+    @Column(name = "SA_TYPE")
+    private String saType;
+    @Column(name = "PJBG_TYPE")
+    private String pjbgType;
+    @Column(name = "SA_DATE")
+    private Date saDate;
+    @Column(name = "START_DATE_SA")
+    private Date startDateSa;
+    @Column(name = "END_DATE_SA")
+    private Date endDateSa;
+    @Column(name = "COMITMENT_DATE")
+    private Date comitmentDate;
+    @Column(name = "BILLING_CYCLE")
+    private String billingCycle;
+    @Column(name = "TERMS_OF_PAYMENT_NAME")
+    private String termsOfPaymentName;
+    @Column(name = "INVOICE_TEMPLATE")
+    private String invoiceTemplate;
+    @Column(name = "GAS_IN_PLAN_DATE")
+    private Date gasInplanDate;
+    @Column(name = "ALREADY_GAS_IN")
+    private String alreadyGasIn;
+    @Column(name = "PRODUCT")
+    private String product;
+    @Column(name = "PRODUCT_TYPE")
+    private String productType;
+    @Column(name = "PRODUCT_CLASS")
+    private String productClass;
+    @Column(name = "PRODUCT_VERSION_ID")
+    private Integer productVersionId;
+    @Column(name = "CREATE_FROM")
+    private String createFrom;
+    @Column(name = "PAYMENT_TYPE")
+    private String paymentType;
+    @Column(name = "CHARGING_METHOD")
+    private String chargingMethod;
+    @Column(name = "UOM")
+    private String uom;
+    @Column(name = "MIN")
+    private String min;
+    @Column(name = "MAX")
+    private String max;
+    @Column(name = "PRESSURE")
+    private String pressure;
+    @Column(name = "CONTRACT_PRESSURE")
+    private String contractPressure;
+
+    @Column(name = "PRICE_CODE")
+    private String priceCode;
+    @Column(name = "PRICING_RULE")
+    private String pricingRule;
+    @Column(name = "PRICE_ADJUSTMENT_IDR")
+    private String priceadjustmentIdr;
+    @Column(name = "PRICE_ADJUSTMENT_USD")
+    private String priceAdjustmentUsd;
+    @Column(name = "CALORIE_CODE")
+    private String calorieCode;
+    @Column(name = "CALORIE_TYPE")
+    private String calorieType;
+    @Column(name = "GAS_SOURCE_NAME")
+    private String gasSourceName;
+    @Column(name = "GAS_SOURCE_DESC")
+    private String gasSourceDesc;
+
+    @Column(name = "CREATED_BY")
+    private String createdBy;
+
+    @Column(name = "UPDATED_BY")
+    private String updatedBy;
+
+    @Column(name = "CREATED_DATE")
+    private Date createdDate;
+
+    @Column(name = "UPDATED_DATE")
+    private Date updatedDate;
+
+}

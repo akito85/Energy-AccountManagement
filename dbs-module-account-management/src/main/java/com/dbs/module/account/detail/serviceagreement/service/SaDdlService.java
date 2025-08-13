@@ -616,15 +616,19 @@ public class SaDdlService {
             boolean valid = false;
 
             String currencyId = "";
-            Optional<R_GLOBAL_TYPE_VALUE> getCurrencyId = rGlobalTypeValueRepo.findByNameAndGlobalType(data.getCurrency(), 242);
-            if(getCurrencyId.isPresent()) {
-                currencyId = String.valueOf(getCurrencyId.get().getGlbTypeValId());
+//            Optional<R_GLOBAL_TYPE_VALUE> getCurrencyId = rGlobalTypeValueRepo.findByNameAndGlobalType(data.getCurrency(), 242);
+            List<R_GLOBAL_TYPE_VALUE> rgbsCurr = globalTypeValueService.getDetailGlobalType("Currency");
+            if(!rgbsCurr.isEmpty()) {
+                Optional<R_GLOBAL_TYPE_VALUE> getCurrencyId = rgbsCurr.stream().filter(e->e.getName().equalsIgnoreCase(data.getCurrency())).findFirst();
+                currencyId = String.valueOf(getCurrencyId.isPresent() ? getCurrencyId.get().getGlbTypeValId() : null);
             }
 
             String uomId = "";
-            Optional<R_GLOBAL_TYPE_VALUE> getUomId = rGlobalTypeValueRepo.findByNameAndGlobalType(data.getUom(), 345);
-            if(getUomId.isPresent()) {
-                uomId = String.valueOf(getUomId.get().getGlbTypeValId());
+//            Optional<R_GLOBAL_TYPE_VALUE> getUomId = rGlobalTypeValueRepo.findByNameAndGlobalType(data.getUom(), 345);
+            List<R_GLOBAL_TYPE_VALUE> rgbsUom = globalTypeValueService.getDetailGlobalType("UOM");
+            if(!rgbsUom.isEmpty()) {
+                Optional<R_GLOBAL_TYPE_VALUE> getUomId = rgbsUom.stream().filter(e->e.getName().equalsIgnoreCase(data.getUom())).findFirst();
+                uomId = String.valueOf(getUomId.isPresent() ? getUomId.get().getGlbTypeValId() : null);
             }
 
             List<R_PRICING_DETAIL> dataDetailPricing = rPricingDetailRepo.findAllByIdPricingAndCurrencyAndUom(data.getPriceCodeId(), currencyId, uomId);

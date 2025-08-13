@@ -143,8 +143,7 @@ public class AccountAddressService {
         ResponseObject result = new ResponseObject();
 
         try {
-
-            List<R_GLOBAL_TYPE_VALUE> getListTypeValue = rGlobalTypeValueRepo.findByGlobalType(33);
+            List<R_GLOBAL_TYPE_VALUE> getListTypeValue = globalTypeValueService.getDetailGlobalType("Address Type");
             List<MLocationDetailDTO> listType = new ArrayList<>();
             int index = 0;
 

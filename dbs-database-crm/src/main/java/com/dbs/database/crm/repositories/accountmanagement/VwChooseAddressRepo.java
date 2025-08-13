@@ -12,7 +12,9 @@ import java.util.Map;
 import static com.dbs.common.base.utils.Constant.DEFAULT_SELECTOR;
 import static com.dbs.common.base.utils.Constant.EQUALS_SELECTOR;
 import static org.springframework.data.jpa.domain.Specification.where;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface VwChooseAddressRepo extends PagingAndSortingRepository<VW_CHOOSE_ADDRESS, Integer>, JpaSpecificationExecutor<VW_CHOOSE_ADDRESS> {
 
     default Specification<VW_CHOOSE_ADDRESS> getSpecificationFromFilters(MaterialTablePagingRequest pagingdata, Map<String, Object> filter) {

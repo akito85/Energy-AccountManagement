@@ -5,6 +5,7 @@ import com.dbs.common.base.utils.MaterialTablePagingRequest;
 import com.dbs.common.base.utils.PagingUtils;
 import com.dbs.common.base.utils.ResponseUtils;
 import com.dbs.common.library.ctrl.ResponseObject;
+import com.dbs.common.library.services.GlobalTypeValueService;
 import com.dbs.common.library.utils.FlowStatus;
 import com.dbs.database.crm.entities.accountmanagement.M_ASSETS;
 import com.dbs.database.crm.entities.accountmanagement.M_ASSETS_ASSIGNMENT_HISTORY;
@@ -40,14 +41,6 @@ public class PremiseService {
     private static final Logger logger = LoggerFactory.getLogger(AccountAddressService.class);
 
     @Autowired
-    private MAccountAddressRepo accountAddressRepo;
-    @Autowired
-    private MUserRepo userRepo;
-    @Autowired
-    private AuditTrailRepo auditTrailRepo;
-    @Autowired
-    private MaddressRepo maddressRepo;
-    @Autowired
     private MServicePointRepo mServicePointRepo;
     @Autowired
     private RGlobalTypeValueRepo rGlobalTypeValueRepo;
@@ -56,11 +49,11 @@ public class PremiseService {
     @Autowired
     private MAssetAssignmentRepo mAssetAssignmentRepo;
     @Autowired
-    private Validator validator;
-    @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private VWCustomerAddressRepo vwCustomerAddressRepo;
+    @Autowired
+    private GlobalTypeValueService globalTypeService;
 
     @SuppressWarnings("java:S3776")
     public ResponseEntity<ResponseObject> getPremiseByAccountId(MaterialTablePagingRequest pagingData,
@@ -110,7 +103,8 @@ public class PremiseService {
                     for (M_SERVICE_POINT sp : getSp) {
                         ServicePointViewDTO addDataSp = new ServicePointViewDTO();
                         addDataSp.setServicePointId(sp.getId());
-                        Optional<R_GLOBAL_TYPE_VALUE> getServicePointName = rGlobalTypeValueRepo.findByGlbTypeValIdAndGlobalType(sp.getServicePointName(), 37);
+                        
+                        Optional<R_GLOBAL_TYPE_VALUE> getServicePointName = globalTypeService.getOptionalGlobalTypeByGlbTypeValId("Service Point Name", sp.getServicePointName());
 
                         if(getServicePointName.isPresent()) {
                             addDataSp.setServicePointName(getServicePointName.get().getName());
