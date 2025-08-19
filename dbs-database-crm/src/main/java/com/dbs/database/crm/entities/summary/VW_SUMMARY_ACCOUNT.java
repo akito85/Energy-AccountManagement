@@ -178,6 +178,8 @@ public class VW_SUMMARY_ACCOUNT {
     private String faxnumber;
     @Column(name = "PGN_MOBILE")
     private String pgnMobile;
+    @Column(name = "PGN_MOBILE_EMAIL")
+    private String pgnMobileEmail;
     @Column(name = "MEDIA")
     private String media;
     @Column(name = "START_DATE")

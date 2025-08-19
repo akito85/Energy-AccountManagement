@@ -79,11 +79,15 @@ public class EmailServices {
         mailSender.setPassword(rgpPassOptional.isPresent() ? AesUtil.decrypt(rgpPassOptional.get().getGpdVal(), key, initVector) : "");
 
         Properties props = mailSender.getJavaMailProperties();
-
-//        Optional<R_GLOBAL_PROPERTIES_DTL> rgpProtocolOptional = mGlobalProperties.getRGlobalPropertiesDtls().stream()
-//                .filter(e -> e.getGpdKey().equalsIgnoreCase("E_PROTOCOL"))
-//                .findFirst();
-//        props.put("mail.transport.protocol", rgpProtocolOptional.isPresent() ? rgpProtocolOptional.get().getGpdVal() : "");
+        /*gmail*/
+        if ("smtp.gmail.com".equalsIgnoreCase(mailSender.getHost())) {
+            Optional<R_GLOBAL_PROPERTIES_DTL> rgpProtocolOptional = mGlobalProperties.getRGlobalPropertiesDtls().stream()
+                .filter(e -> e.getGpdKey().equalsIgnoreCase("E_PROTOCOL"))
+                .findFirst();
+            props.put("mail.transport.protocol", rgpProtocolOptional.isPresent() ? rgpProtocolOptional.get().getGpdVal() : "");
+            props.put("mail.smtp.ssl.trust", rgpHostOptional.isPresent() ? rgpHostOptional.get().getGpdVal() : "");
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+        }
 
         Optional<R_GLOBAL_PROPERTIES_DTL> rgpAuthOptional = mGlobalProperties.getRGlobalPropertiesDtls().stream()
                 .filter(e -> e.getGpdKey().equalsIgnoreCase("E_AUTH"))
@@ -108,8 +112,7 @@ public class EmailServices {
                 .filter(e -> e.getGpdKey().equalsIgnoreCase("E_CLASS"))
                 .findFirst();
         props.put("mail.smtp.socketFactory.class", rgpClassOptional.isPresent() ? rgpClassOptional.get().getGpdVal() : "");
-//        props.put("mail.smtp.ssl.trust", rgpHostOptional.isPresent() ? rgpHostOptional.get().getGpdVal() : "");
-//        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+       
         props.put("mail.smtp.connectiontimeout", 5000);
         props.put("mail.smtp.timeout", 5000);
         props.put("mail.smtp.writetimeout", 5000);
