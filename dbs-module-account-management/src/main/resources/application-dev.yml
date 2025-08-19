@@ -22,10 +22,6 @@ log4j.logger.org.hibernate.type: TRACE
 #spring.crm-datasource.userName: shg_crm_new
 #spring.crm-datasource.password: shg_crm_new
 
-#PGN CRM
-spring.crm-datasource.userName: PGNBILL
-spring.crm-datasource.password: P4ntang_M3nyer4h
-
 #SHG PAYMENT
 #spring.pym-datasource.userName: shg_payment
 #spring.pym-datasource.password: shg_payment

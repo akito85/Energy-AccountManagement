@@ -16,8 +16,20 @@ public class VW_SUMMARY_AGREEMENT extends DefaultBaseEntities {
     @Id
     @Column(name = "SEQUENCE")
     private Integer sequence;
-    @Column(name = "COST_CENTER")
+    @Column(name = "COST_CENTER_ID")
     private Integer costCenterId;
+    @Column(name = "CUSTOMER_NUMBER")
+    private String customerNumber;
+    @Column(name = "CUSTOMER_NAME")
+    private String customerName;
+    @Column(name = "SOR")
+    private String sor;
+    @Column(name = "COST_CENTER")
+    private String costCenter;
+    @Column(name = "ACCOUNT_NAME")
+    private String accountName;
+    @Column(name = "ACCOUNT_NUMBER")
+    private String accountNumber;
     @Column(name = "ACCOUNT_ID_SA")
     private Integer accountIdSa;
     @Column(name = "PRICE_CODE")
@@ -70,6 +82,8 @@ public class VW_SUMMARY_AGREEMENT extends DefaultBaseEntities {
     private String isMain;
     @Column(name = "STATUS")
     private String status;
+    @Column(name = "CALCULATION_TYPE")
+    private String calculationType;
     @Column(name = "PAYMENT_TYPE")
     private String paymentType;
     @Column(name = "CHARGING_METHOD")

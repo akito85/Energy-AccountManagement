@@ -1,1 +1,1 @@
-spring.profiles.active: vault
+spring.profiles.active: dev

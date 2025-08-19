@@ -104,6 +104,8 @@ public class VW_SUMMARY_ACCOUNT {
     private String address;
     @Column(name = "ADDRESS_TYPE")
     private String addressType;
+    @Column(name = "ADDRESS_DESCRIPTION")
+    private String addressDescription;
     @Column(name = "BUILDING")
     private String building;
     @Column(name = "FLOOR")
@@ -136,6 +138,14 @@ public class VW_SUMMARY_ACCOUNT {
     private String businessPurpose;
     @Column(name = "PREMISE")
     private String premise;
+    @Column(name = "LONGITUDE")
+    private String longitude;
+    @Column(name = "LATITUDE")
+    private String latitude;
+    @Column(name = "ALTITUDE")
+    private String altitude;
+    @Column(name = "SOURCE_MAP")
+    private String sourceMap;
     @Column(name = "CONTACT_NAME")
     private String contactName;
     @Column(name = "JOB_NAME")
@@ -144,6 +154,10 @@ public class VW_SUMMARY_ACCOUNT {
     private String positionName;
     @Column(name = "CONTACT_ADDRESS")
     private String contactAddress;
+    @Column(name = "CONTACT_ADDITIONAL_NOTE")
+    private String contactAdditionalNote;
+    @Column(name = "CONTACT_DESCRIPTION")
+    private String contactDescription;
     @Column(name = "FIRST_NAME")
     private String firstName;
     @Column(name = "MIDDLE_NAME")
@@ -182,6 +196,10 @@ public class VW_SUMMARY_ACCOUNT {
     private String taxIdentifierName;
     @Column(name = "TAX_IDENTIFIER_ADDRESS")
     private String taxIdentifierAddress;
+    @Column(name = "START_DATE_TAX_IDENTIFIER")
+    private Date startDateTaxIdentifier;
+    @Column(name = "END_DATE_TAX_IDENTIFIER")
+    private Date endDateTaxIdentifier;
     @Column(name = "RECEIVABLE_ACCOUNT")
     private String receivableAccount;
     @Column(name = "REVENUE_ACCOUNT")
@@ -226,6 +244,10 @@ public class VW_SUMMARY_ACCOUNT {
     private Date gasInplanDate;
     @Column(name = "ALREADY_GAS_IN")
     private String alreadyGasIn;
+    @Column(name = "CALCULATION_TYPE")
+    private String calculationType;
+    @Column(name = "TIME_UNIT")
+    private String timeUnit;
     @Column(name = "PRODUCT")
     private String product;
     @Column(name = "PRODUCT_TYPE")
@@ -263,6 +285,12 @@ public class VW_SUMMARY_ACCOUNT {
     private String calorieCode;
     @Column(name = "CALORIE_TYPE")
     private String calorieType;
+    @Column(name = "CALORIE_START_DATE")
+    private Date calorieStartDate;
+    @Column(name = "CALORIE_END_DATE")
+    private Date calorieEndDate;
+    @Column(name = "UOM_GAS_SOURCE")
+    private String uomGasSource;
     @Column(name = "GAS_SOURCE_NAME")
     private String gasSourceName;
     @Column(name = "GAS_SOURCE_DESC")

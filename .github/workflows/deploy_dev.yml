@@ -1,10 +1,8 @@
 name: Deploy to Kubernetes Cluster Development
 on:
-  pull_request:
+  push:
     branches:
-      - dev
-    types:
-      - closed
+      - account-management-temp
 jobs:
   deploy:
     runs-on:

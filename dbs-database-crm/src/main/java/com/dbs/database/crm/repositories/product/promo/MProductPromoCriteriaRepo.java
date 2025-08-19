@@ -77,4 +77,7 @@ public interface MProductPromoCriteriaRepo extends PagingAndSortingRepository<M_
     List<M_PROMO_CRITERIA> findNotIn(Integer idPromo, List<Integer> idCriteria);
     
     Optional<List<M_PROMO_CRITERIA>> findByIdPromo(Integer idPromo);
+    
+    Optional<M_PROMO_CRITERIA> findByIdPromoAndIdCriteria(Integer idPromo, Integer idCriteria);
+    
 }

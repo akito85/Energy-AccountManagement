@@ -1,8 +1,7 @@
 name: Deploy to Kubernetes Cluster Development
 on:
   push:
-    branches:
-      - account-management-temp
+    branches: []
 jobs:
   deploy:
     runs-on:
