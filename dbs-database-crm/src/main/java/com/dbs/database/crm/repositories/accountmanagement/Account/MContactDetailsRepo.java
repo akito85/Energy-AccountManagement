@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.domain.Specification;
 import static org.springframework.data.jpa.domain.Specification.where;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,4 +66,7 @@ public interface MContactDetailsRepo extends PagingAndSortingRepository<M_CONTAC
     Optional<M_CONTACT_DETAILS> findById(Integer id);
     
     M_CONTACT_DETAILS findByContactDetailsId(Integer contactDetailsId);
+    
+    @Query(value = "SELECT * FROM M_CONTACT_DETAILS a WHERE CONCAT(CONCAT(a.INPUT_TYPE,CONCAT(CONCAT(a.TYPE,a.PREFIX_1), a.PREFIX_2)),a.VALUE) = :fullContact", nativeQuery = true)
+    M_CONTACT_DETAILS findByFullContactDetail(String fullContact);
 }

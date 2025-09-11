@@ -45,4 +45,7 @@ public interface VWApprovalHierarchyDtlRepo extends PagingAndSortingRepository<V
 			Integer id, Integer lvl, String position, String sub, String fin);
 
 	List<VW_APPROVAL_HIERARCHY_DETAIL> findAllByApphierId(Integer apphierId);
+        
+        Optional<List<VW_APPROVAL_HIERARCHY_DETAIL>> findByApphierIdAndApprovalLevelAndIsSubmitterAndIsFinal(
+			Integer id, Integer lvl, String sub, String fin);
 }

@@ -59,7 +59,11 @@ public interface TEmpAssignmentRepo extends PagingAndSortingRepository<T_EMP_ASS
 
     List<T_EMP_ASSIGNMENT> findByPositionIdAndStatus(Integer positionId, String status);
 
-    List<T_EMP_ASSIGNMENT> findAllByIsMain(String isMain);
+    @Query(nativeQuery = true ,value = "SELECT * FROM T_EMP_ASSIGNMENT tea \n" +
+            "LEFT JOIN M_EMPLOYEE me ON tea.EMPLOYEE_CODE = me.EMPLOYEE_CODE\n" +
+            "WHERE me.STATUS = 'ACTIVE' AND tea.STATUS = 'ACTIVE' \n" +
+            "AND tea.END_DATE >= SYSDATE AND tea.POSITION_ID = :positionId" )
+    List<T_EMP_ASSIGNMENT> findPositionId (Integer positionId);
 
     List<T_EMP_ASSIGNMENT> findAllByJobId(Integer jobId);
     

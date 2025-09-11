@@ -1,6 +1,5 @@
 package com.dbs.database.crm.entities.accountmanagement.view;
 
-import com.dbs.common.base.entities.BaseEntities;
 import com.dbs.common.base.entities.DefaultBaseEntities;
 import lombok.Data;
 

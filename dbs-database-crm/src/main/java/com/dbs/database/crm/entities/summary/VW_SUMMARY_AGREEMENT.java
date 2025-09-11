@@ -26,6 +26,14 @@ public class VW_SUMMARY_AGREEMENT extends DefaultBaseEntities {
     private String sor;
     @Column(name = "COST_CENTER")
     private String costCenter;
+    @Column(name = "METER_READING_CODE")
+    private String meterReadingCode;
+    @Column(name = "ACCOUNT_SEGMENT")
+    private String accountSegment;
+    @Column(name = "ACCOUNT_GROUP_TYPE")
+    private String accountGroupType;
+    @Column(name = "ACCOUNT_TYPE")
+    private String accountType;
     @Column(name = "ACCOUNT_NAME")
     private String accountName;
     @Column(name = "ACCOUNT_NUMBER")
@@ -58,6 +66,8 @@ public class VW_SUMMARY_AGREEMENT extends DefaultBaseEntities {
     private Date endDateSa;
     @Column(name = "COMITMENT_DATE")
     private Date comitmentDate;
+    @Column(name = "DESCRIPTION")
+    private String saDescription;
     @Column(name = "BILLING_CYCLE")
     private String billingCycle;
     @Column(name = "TERMS_OF_PAYMENT_NAME")
@@ -75,7 +85,7 @@ public class VW_SUMMARY_AGREEMENT extends DefaultBaseEntities {
     @Column(name = "PRODUCT_CLASS")
     private String productClass;
     @Column(name = "PRODUCT_VERSION_ID")
-    private Integer productVersionId;
+    private String productVersionId;
     @Column(name = "CREATE_FROM")
     private String createFrom;
     @Column(name = "IS_MAIN")
@@ -98,6 +108,8 @@ public class VW_SUMMARY_AGREEMENT extends DefaultBaseEntities {
     private String pressure;
     @Column(name = "CONTRACT_PRESSURE")
     private String contractPressure;
+    @Column(name = "CURRENCY")
+    private String currency;
     @Column(name = "TIME_UNIT")
     private String timeUnit;
 }

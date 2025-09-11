@@ -29,7 +29,7 @@ public class M_ANNOUNCEMENT extends BaseEntities implements Serializable {
     @Column(name="ANN_NAME", length = 100)
     private String annName;
 
-    @Column(name="ANN_CONTENT", length = 500)
+    @Column(name="ANN_CONTENT", length = 4000)
     private String annContent;
 
     @Column(name="ENTITY_ID")

@@ -64,6 +64,9 @@ public interface TAmSARepo extends PagingAndSortingRepository<T_AM_SA, Integer>,
 
     @Query(value = "select tas.* from T_AM_SA tas where tas.ACCOUNT_ID=:accountId and tas.STATUS=:status and tas.IS_MAIN=:isMain", nativeQuery = true)
     Optional<T_AM_SA> findByAccountIdAndStatusAndIsMain(Integer accountId, String status, String isMain);
+    
+    Optional<T_AM_SA> findBySaNumberAndStatus(String saNumber,String status);
+    
 }
 
 

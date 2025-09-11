@@ -69,4 +69,7 @@ public interface MContactRepo extends PagingAndSortingRepository<M_CONTACT, Inte
     
     Optional<M_CONTACT> findTopByContactNameAndJobIdAndPositionId(String contactName, Integer jobId, Integer positionId);
     
+    @Query(value = "SELECT * FROM M_CONTACT a WHERE CONCAT(a.CONTACT_NAME,CONCAT(CONCAT(a.FIRST_NAME,a.MIDDLE_NAME), a.LAST_NAME)) = :fullContact", nativeQuery = true)
+    Optional<M_CONTACT> findByFullContact(String fullContact);
+    
 }

@@ -210,6 +210,8 @@ public class VW_SUMMARY_ACCOUNT {
     private String billingBucketCode;
     @Column(name = "BILLING_BUCKET_NAME")
     private String billingBucketName;
+    @Column(name = "BILLING_BUCKET_DESCRIPTION")
+    private String billingBucketDescription;
     @Column(name = "PPN")
     private String ppn;
     @Column(name = "PPH")
@@ -246,6 +248,8 @@ public class VW_SUMMARY_ACCOUNT {
     private Date gasInplanDate;
     @Column(name = "ALREADY_GAS_IN")
     private String alreadyGasIn;
+    @Column(name = "GAS_IN_DATE")
+    private String gasInDate;
     @Column(name = "CALCULATION_TYPE")
     private String calculationType;
     @Column(name = "TIME_UNIT")
@@ -274,6 +278,8 @@ public class VW_SUMMARY_ACCOUNT {
     private String pressure;
     @Column(name = "CONTRACT_PRESSURE")
     private String contractPressure;
+    @Column(name = "CURRENCY")
+    private String currency;
 
     @Column(name = "PRICE_CODE")
     private String priceCode;
@@ -309,5 +315,18 @@ public class VW_SUMMARY_ACCOUNT {
 
     @Column(name = "UPDATED_DATE")
     private Date updatedDate;
+    
+    @Column(name = "WAPU_START_DATE")
+    private Date wapuStartDate;
+    
+    @Column(name = "WAPU_END_DATE")
+    private Date wapuEndDate;
+    
+    @Column(name = "WAPU_FLAG")
+    private String wapuFlag;
+    
+    @Column(name = "SA_DESCRIPTION")
+    private String saDescription;
+    
 
 }

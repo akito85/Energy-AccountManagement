@@ -42,8 +42,17 @@ public interface VWUserDelegationRepo extends PagingAndSortingRepository<VW_USER
     @SuppressWarnings("unchecked")
     default Specification<VW_USER_DELEGATION> addDefaultFilters(Specification<VW_USER_DELEGATION> specification,
                                                                Map<String, Object> filter, Boolean isFirst) {
-        if (filter.get("delegateFromId") != "") {
+        if (filter.get("delegateFromId") != null && filter.get("delegateFromId") != "") {
             specification = (Specification<VW_USER_DELEGATION>) PagingUtils.createHeaderFilter(specification, "delegateFromId", Integer.parseInt(filter.get("delegateFromId").toString()), isFirst);
+        }
+        if (filter.get("delegateToId") != null && filter.get("delegateToId") != "") {
+            specification = (Specification<VW_USER_DELEGATION>) PagingUtils.createHeaderFilter(specification, "delegateToId", Integer.parseInt(filter.get("delegateToId").toString()), isFirst);
+        }
+        if (filter.get("positionFromDelegator") != null && filter.get("positionFromDelegator") != "") {
+            specification = (Specification<VW_USER_DELEGATION>) PagingUtils.createHeaderFilter(specification, "positionFromDelegator", Integer.parseInt(filter.get("positionFromDelegator").toString()), isFirst);
+        }
+         if (filter.get("positionDelegateToId") != null && filter.get("positionDelegateToId") != "") {
+            specification = (Specification<VW_USER_DELEGATION>) PagingUtils.createHeaderFilter(specification, "positionDelegateToId", Integer.parseInt(filter.get("positionDelegateToId").toString()), isFirst);
         }
         return specification;
     }

@@ -82,5 +82,7 @@ public interface MAccountRepo extends PagingAndSortingRepository<M_ACCOUNT, Inte
     
     @Query(value = "SELECT COALESCE(TO_NUMBER(MAX(ACCOUNT_NUMBER)),0) FROM M_ACCOUNT", nativeQuery = true)
     Integer findMaxCode();
+    
+    Optional<M_ACCOUNT> findByRegistrationNumber(String registrationNumber);
 }
 
