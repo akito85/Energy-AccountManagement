@@ -33,7 +33,7 @@ spec:
         vault.hashicorp.com/agent-inject-status: {{ .Values.podAnnotations.vault.inject | quote}}
         vault.hashicorp.com/agent-inject-secret-db-access.properties: {{ .Values.podAnnotations.vault.secretPath | quote}}
         vault.hashicorp.com/agent-inject-template-db-access.properties: | 
-          {{ "{{- with secret \""}}energy-development/db_access{{ "\" -}}" }}
+          {{ "{{- with secret \""}}energy-development/secret_access{{ "\" -}}" }}
           {{ .Values.podAnnotations.vault.access_properties_un }} 
           {{ .Values.podAnnotations.vault.access_properties_pw }}
           {{ "{{- end }}" }}

@@ -34,7 +34,7 @@ podAnnotations:
     authPath: ""
     role: "default"
     access_path: ""
-    secretPath: "energy-development/db_access"
+    secretPath: "energy-development/secret_access"
     inject: "update"
     access_properties_un: spring.crm-datasource.userName={{ .Data.data.username }}
     access_properties_pw: spring.crm-datasource.password={{ .Data.data.password }}
