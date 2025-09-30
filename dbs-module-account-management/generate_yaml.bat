@@ -1,17 +1,17 @@
-@REM helm template dbs-module-account .\dbs-module-account\ --version 0.1.0 ^
-@REM --namespace=energy-development ^
-@REM --set resources.limits.cpu="0.25" ^
-@REM --set resources.limits.memory="1Gi" ^
-@REM --set resources.requests.cpu="0.25" ^
-@REM --set resources.requests.memory="512Mi" ^
-@REM --set serviceAccount.name="energy-vault" ^
-@REM --set podAnnotations.vault.authPath="auth/energy-development-kubernetes" ^
-@REM --set podAnnotations.vault.secretPath="energy-development/data/db_access" ^
-@REM --set imagePullSecrets.name="pgnregcred" ^
-@REM --set podAnnotations.releaseNamespace="energy-development" ^
-@REM --set image.registry_url="registry.pgn.co.id" ^
-@REM --set image.name="registry.pgn.co.id/billing-dev/dbs-module-account" ^
-@REM --set podAnnotations.vault.role="energy" > deployment.yaml
+helm template dbs-module-account .\dbs-module-account\ --version 0.1.0 ^
+--namespace=energy-development ^
+--set resources.limits.cpu="0.25" ^
+--set resources.limits.memory="1Gi" ^
+--set resources.requests.cpu="0.25" ^
+--set resources.requests.memory="512Mi" ^
+--set serviceAccount.name="energy-vault" ^
+--set podAnnotations.vault.authPath="auth/energy-development-kubernetes" ^
+--set podAnnotations.vault.secretPath="energy-development/data/db_access" ^
+--set imagePullSecrets.name="pgnregcred" ^
+--set podAnnotations.releaseNamespace="energy-development" ^
+--set image.registry_url="registry.pgn.co.id" ^
+--set image.name="registry.pgn.co.id/billing-dev/dbs-module-account" ^
+--set podAnnotations.vault.role="energy" > output.yaml
 
 @REM helm template dbs-module-account .\dbs-module-account\ --version 0.1.0 ^
 @REM --namespace=energy-development ^
@@ -61,5 +61,5 @@
 
 @REM --namespace=billing-pgnbilling-staging
 
-helm package .\dbs-module-account\
-helm push .\dbs-module-account-0.1.0.tgz oci://registry.pgn.co.id/billing-dev/helm/dbs-module-account
+@REM helm package .\dbs-module-account\
+@REM helm push .\dbs-module-account-0.1.0.tgz oci://registry.pgn.co.id/billing-dev/helm/dbs-module-account
