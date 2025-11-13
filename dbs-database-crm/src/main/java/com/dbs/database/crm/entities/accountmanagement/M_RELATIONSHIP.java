@@ -20,16 +20,10 @@ public class M_RELATIONSHIP extends BaseEntities {
     @Column(name = "ID", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "M_RELATIONSHIP_SEQ")
     @SequenceGenerator(sequenceName = "M_RELATIONSHIP_SEQ", allocationSize = 1, name = "M_RELATIONSHIP_SEQ")
-    private Integer relationshipId;
-
-    @Column(name = "CUSTOMER_NUMBER")
-    private Integer customerNumber;
+    private Integer id;
 
     @Column(name = "DIRECTIONAL_FLAG")
     private String directionalFlag;
-
-    @Column(name = "RELATIONSHIP_CATEGORY")
-    private String relationshipCategory;
 
     @Column(name = "SUBJECT_PARTY_ID")
     private Integer subjectPartyId;
@@ -37,8 +31,11 @@ public class M_RELATIONSHIP extends BaseEntities {
     @Column(name = "OBJECT_PARTY_ID")
     private Integer objectPartyId;
 
-    @Column(name = "RELATION_CODE")
-    private Integer relationCode;
+    @Column(name = "RELATIONSHIP_CATEGORY")
+    private String relationshipCategory;
+
+    @Column(name = "RELATION_TYPE")
+    private String relationType;
 
     @Column(name = "START_DATE")
     private Date startDate;
@@ -46,12 +43,15 @@ public class M_RELATIONSHIP extends BaseEntities {
     @Column(name = "END_DATE")
     private Date endDate;
 
-    @Column(name = "OWNER")
-    private String owner;
-
     @Column(name = "DESCRIPTION")
     private String description;
 
     @Column(name = "SOURCE")
     private String source;
+
+    @Column(name = "STATUS")
+    private String status;
+
+    @Column(name = "STATUS_APPROVAL")
+    private String statusApproval;
 }

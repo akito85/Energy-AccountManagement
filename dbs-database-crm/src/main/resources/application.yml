@@ -1,6 +1,6 @@
 
 #-->IP LOCAL
-spring.datasource.url: jdbc:oracle:thin:@172.31.166.78:1521:ORCLCDB
+spring.datasource.url: jdbc:oracle:thin:@//167.71.200.144:1523/PDEV
 #-->IP SERVER
 #spring.datasource.url: jdbc:oracle:thin:@103.65.96.187:1521:ORCLCDB
 spring.datasource.driver-class-name: oracle.jdbc.OracleDriver
@@ -17,8 +17,8 @@ log4j.logger.org.hibernate.SQL: DEBUG
 log4j.logger.org.hibernate.type: TRACE
 
 #SHG CRM
-spring.crm-datasource.userName: shg_crm_new
-spring.crm-datasource.password: shg_crm_new
+spring.crm-datasource.userName: PGNBILL
+spring.crm-datasource.password: P4ntang_M3nyer4h
 
 #SHG PAYMENT
 #spring.pym-datasource.userName: shg_payment
