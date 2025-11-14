@@ -1,0 +1,76 @@
+#-->IP LOCAL
+#spring.datasource.url: jdbc:oracle:thin:@172.31.166.78:1521:ORCLCDB
+#-->IP SERVER
+#spring.datasource.url: jdbc:oracle:thin:@103.65.96.187:1521:ORCLCDB
+spring.datasource.url: jdbc:oracle:thin:@10.129.2.173:1523:PDEV
+spring.datasource.driver-class-name: oracle.jdbc.OracleDriver
+spring.datasource.hikari.maxLifetime: 1800000
+spring.datasource.hikari.connectionTimeout: 30000
+spring.datasource.hikari.idleTimeout: 600000
+spring.datasource.hikari.maximumPoolSize: 30
+spring.hibernate.ddl-auto: none
+spring.hibernate.dialect: org.hibernate.dialect.Oracle12cDialect
+spring.hibernate.show_sql: false
+spring.hibernate.implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+spring.hibernate.physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+log4j.logger.org.hibernate.SQL: DEBUG
+log4j.logger.org.hibernate.type: TRACE
+
+#SHG CRM
+#spring.crm-datasource.userName: shg_crm_new
+#spring.crm-datasource.password: shg_crm_new
+spring.crm-datasource.userName: PGNBILLSTG
+spring.crm-datasource.password: iKJAQ289@Aij96
+
+#SHG PAYMENT
+#spring.pym-datasource.userName: shg_payment
+#spring.pym-datasource.password: shg_payment
+
+#SHG INVOICE
+#spring.inv-datasource.userName: shg_invoice
+#spring.inv-datasource.password: shg_invoice
+
+#Minio Config
+#AGIT
+#spring.minio.url: http://103.28.163.169:8900
+#spring.minio.url: http://172.31.166.76:8900
+#spring.minio.bucket: digisquare
+#spring.minio.access-key: z3wT6GjGz0W8UL9u
+#spring.minio.secret-key: 0rWJYfFa4eTMEoSQUwHIbkPikY16E0Nm
+
+#PGN
+spring.minio.url: https://miniodev-api.pgn.co.id
+spring.minio.bucket: shg-crm
+spring.minio.secure: true
+spring.minio.access-key: ImkHGLJJxQZnFLblcvm1
+spring.minio.secret-key: nEUkCuzZsdcj82jWj9pwX7W3lKQMRVq5oFmQ7jya
+spring.minio.check-bucket: false
+
+spring.servlet.multipart.enabled: true
+spring.servlet.multipart.file-size-threshold: 2KB
+spring.servlet.multipart.max-file-size: 5MB
+spring.servlet.multipart.max-request-size: 5MB
+
+#Port Number
+server.port: 8902
+app.label: stag
+
+#Token Config
+backend.app.jwt.secret: 8xds//H4wsYnk+yYleprfr3uajuXN9svF8jVz4OrllQ=hjk76klz//ok891=fflkjk4hjG7jsadJn
+backend.app.jwt.expiration: 2147483647
+
+#Email Configuration
+spring.mail.host: smtp.gmail.com
+spring.mail.port: 465
+spring.mail.username: cs.digisquare@gmail.com
+spring.mail.password: ixru aifg jgrg hcrd
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls.enable: true
+spring.mail.properties.mail.smtp.socketFactory.port: 465
+spring.mail.properties.mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+spring.mail.properties.mail.smtp.ssl.trust: smtp.gmail.com
+spring.mail.properties.mail.smtp.ssl.protocols: TLSv1.2
+spring.mail.properties.mail.smtp.connectiontimeout: 5000
+spring.mail.properties.mail.smtp.timeout: 5000
+spring.mail.properties.mail.smtp.writetimeout: 5000
+#spring.mail.properties.mail.debug: true
