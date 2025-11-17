@@ -86,4 +86,24 @@ public class ServiceRequestController {
     public ResponseEntity<?> getRequestTypes() {
         return serviceRequestService.getRequestTypes();
     }
+
+    /**
+     * Get service request categories from GLOBAL_TYPE for dropdown
+     * GET /v1/dbs/api/account/servicerequest/category
+     */
+    @GetMapping("/category")
+    @ApiOperation(value = "Get service request categories for dropdown")
+    public ResponseEntity<?> getRequestCategories() {
+        return serviceRequestService.getRequestCategories();
+    }
+
+    /**
+     * Get service request subcategories from GLOBAL_TYPE for dropdown
+     * GET /v1/dbs/api/account/servicerequest/subcategory
+     */
+    @GetMapping("/subcategory")
+    @ApiOperation(value = "Get service request subcategories for dropdown")
+    public ResponseEntity<?> getRequestSubcategories() {
+        return serviceRequestService.getRequestSubcategories();
+    }
 }

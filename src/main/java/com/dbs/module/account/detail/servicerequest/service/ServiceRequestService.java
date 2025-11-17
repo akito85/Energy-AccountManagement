@@ -317,6 +317,46 @@ public class ServiceRequestService {
         }
     }
 
+    /**
+     * Get service request categories from GLOBAL_TYPE for dropdown
+     */
+    public ResponseEntity<ResponseObject> getRequestCategories() {
+        ResponseObject result;
+        try {
+            var categories = globalTypeService.getGlobalTypeOtherWithValue("Service Request Category");
+            result = new ResponseObject(ResponseUtils.SUCCESS_TRUE, HttpStatus.OK,
+                "Success", categories);
+            return new ResponseEntity<>(result, result.getHttpCode());
+        } catch (Exception e) {
+            logger.error(Constant.LOG_ERROR, e.getMessage(), e);
+            return new ResponseEntity<>(
+                new ResponseObject(ResponseUtils.SUCCESS_FALSE,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ResponseUtils.MESSAGE_INTERNAL_SERVER_ERROR, null),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Get service request subcategories from GLOBAL_TYPE for dropdown
+     */
+    public ResponseEntity<ResponseObject> getRequestSubcategories() {
+        ResponseObject result;
+        try {
+            var subcategories = globalTypeService.getGlobalTypeOtherWithValue("Service Request Subcategory");
+            result = new ResponseObject(ResponseUtils.SUCCESS_TRUE, HttpStatus.OK,
+                "Success", subcategories);
+            return new ResponseEntity<>(result, result.getHttpCode());
+        } catch (Exception e) {
+            logger.error(Constant.LOG_ERROR, e.getMessage(), e);
+            return new ResponseEntity<>(
+                new ResponseObject(ResponseUtils.SUCCESS_FALSE,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ResponseUtils.MESSAGE_INTERNAL_SERVER_ERROR, null),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // ==================== Private Helper Methods ====================
 
     /**
