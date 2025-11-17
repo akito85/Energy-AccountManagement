@@ -34,7 +34,7 @@ import com.dbs.common.library.ctrl.ResponseObject;
 import com.dbs.common.library.utils.UserDetailUtils;
 import com.dbs.database.crm.entities.accountmanagement.M_ACCOUNT;
 import com.dbs.database.crm.entities.accountmanagement.VW_CUS_INFO_CC;
-import com.dbs.database.crm.entities.accountmanagement.view.VW_RELATIONSHIP;
+import com.dbs.database.crm.entities.accountmanagement.view.NX_VW_RELATIONSHIP;
 import com.dbs.database.crm.entities.ratingbillinginvoice.view.VW_ACCOUNT_INFORMATION;
 import com.dbs.database.crm.entities.usermanagement.M_POSITION;
 import com.dbs.database.crm.entities.usermanagement.M_USER;
@@ -51,6 +51,11 @@ import com.dbs.module.account.main.dto.accountinformation.SearchFilterDTO;
 import com.dbs.module.account.detail.relationship.dto.AccountRelationshipDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import com.dbs.database.crm.entities.accountmanagement.NX_M_RELATIONSHIP; // Corrected import
+import com.dbs.database.crm.repositories.accountmanagement.Account.MRelationshipRepo; // Corrected import
+import com.dbs.module.account.detail.relationship.dto.AccountRelationshipRequestDTO;
+import java.util.Date;
 
 @Service
 public class AccountRelationshipService {
@@ -77,6 +82,9 @@ public class AccountRelationshipService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private MRelationshipRepo mRelationshipRepo; // Corrected injection
+
     @SuppressWarnings("java:S1192")
     private final List<String> customerColumn = Arrays.asList("customerName","customerNumber","customerType","foundedBirthDate","firstName","identificationType","lastName","maritalStatus","middleName","foundedBirthPlace","searchKey","sex","customerIdentificationNumber","description");
     @SuppressWarnings("java:S1192")
@@ -87,20 +95,19 @@ public class AccountRelationshipService {
         SearchFilterDTO dto, 
         MaterialTablePagingRequest pagingData,
         HttpServletRequest request,
-        PagedResourcesAssembler<VW_RELATIONSHIP> assemblerDto,
+        PagedResourcesAssembler<NX_VW_RELATIONSHIP> assemblerDto,
         Integer accountId
     ) {
         ResponseObject result = new ResponseObject();
         try {
             Map<String, Object> filter = new HashMap<>();
             Map<String, Object> filterAccount = new HashMap<>();
-            Page<VW_RELATIONSHIP> data;
-            List<VW_RELATIONSHIP> listAccountData = null;
+            Page<NX_VW_RELATIONSHIP> data;
+            List<NX_VW_RELATIONSHIP> listAccountData = null;
             
             // =======================================
             // FILTER SUPER USER
             // =======================================
-
             // boolean isItSuperUser = isItSuperUser(Integer.parseInt(UserDetailUtils.getUserId()));
             // logger.info("current entity --> " + UserDetailUtils.getUserEntity());
             // filter.put("entityId", UserDetailUtils.getUserEntity());
@@ -154,13 +161,15 @@ public class AccountRelationshipService {
                 }
             }
 
-            Specification<VW_RELATIONSHIP> specification = pagingData.getSearch().isEmpty()
+            Specification<NX_VW_RELATIONSHIP> specification = pagingData.getSearch().isEmpty()
                     ? ViewRelationshipRepo.getSpecificationDefault(filter)
                     : ViewRelationshipRepo.getSpecificationFromFilters(pagingData, filter);
 
-            Specification<VW_RELATIONSHIP> specificationAccount;
+            Specification<NX_VW_RELATIONSHIP> specificationAccount;
 
+            // =======================================
             // ADVANCED FILTER
+            // =======================================
             List<FilterRequestDTO> filterList= dto.getInputFields();
             List<AdvanceFilter> advanceFilterCustomer = new ArrayList<>();
             List<AdvanceFilter> advanceFilterAccount = new ArrayList<>();
@@ -194,12 +203,14 @@ public class AccountRelationshipService {
                     i++;
                 }
 
+                // =======================================
                 // ACCOUNT
+                // =======================================
                 // if(!advanceFilterAccount.isEmpty()){
                 //     specificationAccount = ViewRelationshipRepo.getSpecificationFromAdvanceFilters(advanceFilterAccount, filterAccount);
                 //     listAccountData = ViewRelationshipRepo.findAll(specificationAccount);
                 //     List<Integer> customerIdFiltering = listAccountData.stream()
-                //             .map(VW_RELATIONSHIP::getId)
+                //             .map(NX_VW_RELATIONSHIP::getId)
                 //             .distinct()
                 //             .collect(Collectors.toList());
                 //     specification = ViewRelationshipRepo.getSpecificationFromAdvanceFiltersWithAccount(advanceFilterCustomer, specification, customerIdFiltering);
@@ -211,7 +222,7 @@ public class AccountRelationshipService {
             data = ViewRelationshipRepo.findAll(specification, PagingUtils.getPaging(pagingData));
             List<AccountRelationshipDTO> listData = new ArrayList<>();
 
-            for(VW_RELATIONSHIP c : data.getContent()) {
+            for(NX_VW_RELATIONSHIP c : data.getContent()) {
                 AccountRelationshipDTO accountRelationshipDTO = new AccountRelationshipDTO();
                 accountRelationshipDTO.setId(c.getId());
                 accountRelationshipDTO.setDirectionalFlag(c.getDirectionalFlag());
@@ -229,7 +240,9 @@ public class AccountRelationshipService {
                 accountRelationshipDTO.setStatus(c.getStatus());
                 accountRelationshipDTO.setStatusApproval(c.getStatusApproval());
                 
+                // =======================================
                 // LIST ACCOUNT
+                // =======================================
                 filterAccount.put("id", c.getId());
 
                 // if(!advanceFilterAccount.isEmpty()){
@@ -272,12 +285,134 @@ public class AccountRelationshipService {
     // =======================================
     //  GET DETAIL BY ID
     // =======================================
-    public ResponseEntity<VW_RELATIONSHIP> getById(Integer id) {
-        Optional<VW_RELATIONSHIP> relationship = ViewRelationshipRepo.findById(id);
-        if (relationship.isPresent()) {
-            return ResponseEntity.ok(relationship.get());
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<ResponseObject> getById(Integer id) {
+    	try {
+    		ResponseObject result = new ResponseObject();
+            Optional<NX_VW_RELATIONSHIP> relationship = ViewRelationshipRepo.findById(id);
+            
+            if (relationship.isPresent()) {
+            	result.setSuccess(ResponseUtils.SUCCESS_TRUE);
+                result.setCode(HttpStatus.OK);
+                result.setMessage("Success Get List Relationship ");
+                result.setData(relationship.get());
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+            	result = new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.NOT_FOUND.value(),
+                        "Relationship with id " + id + " not found", ResponseUtils.DATA_EMPTY);
+                return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+            }
+    	} catch (Exception e) {
+            logger.error(Constant.LOG_ERROR, e.getMessage(), e);
+            return new ResponseEntity<>(
+                    new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.INTERNAL_SERVER_ERROR,
+                            ResponseUtils.MESSAGE_INTERNAL_SERVER_ERROR, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ResponseObject> create(Integer accountId, AccountRelationshipRequestDTO dto) {
+        try {
+            ResponseObject result = new ResponseObject();
+            
+            NX_M_RELATIONSHIP entity = new NX_M_RELATIONSHIP();
+            entity.setSubjectPartyId(accountId); // Use subjectPartyId
+            entity.setObjectPartyId(dto.getObjectId()); // Use objectPartyId
+            entity.setDirectionalFlag(dto.getDirectionalFlag());
+            entity.setRelationType(dto.getRelationshipType()); // Use relationType
+            entity.setRelationshipCategory(dto.getRelationshipCategory());
+            entity.setStartDate(dto.getStartDate());
+            entity.setEndDate(dto.getEndDate());
+            entity.setDescription(dto.getDescription());
+            // Set default values for source, status, statusApproval if needed
+            entity.setSource("MANUAL"); // Assuming a default source
+            entity.setStatus("ACTIVE"); // Assuming a default status
+            entity.setStatusApproval("APPROVED"); // Assuming a default approval status
+
+            NX_M_RELATIONSHIP savedEntity = mRelationshipRepo.save(entity);
+
+            result.setSuccess(ResponseUtils.SUCCESS_TRUE);
+            result.setCode(HttpStatus.CREATED);
+            result.setMessage("Success Create Relationship");
+            result.setData(savedEntity);
+            return new ResponseEntity<>(result, HttpStatus.CREATED);
+
+        } catch (Exception e) {
+            logger.error(Constant.LOG_ERROR, e.getMessage(), e);
+            return new ResponseEntity<>(
+                    new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.INTERNAL_SERVER_ERROR,
+                            ResponseUtils.MESSAGE_INTERNAL_SERVER_ERROR, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ResponseObject> update(Integer id, AccountRelationshipRequestDTO dto) {
+        try {
+            ResponseObject result = new ResponseObject();
+            
+            Optional<NX_M_RELATIONSHIP> existingEntityOpt = mRelationshipRepo.findById(id);
+            if (!existingEntityOpt.isPresent()) {
+                result = new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.NOT_FOUND.value(),
+                        "Relationship with id " + id + " not found", ResponseUtils.DATA_EMPTY);
+                return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+            }
+
+            NX_M_RELATIONSHIP entityToUpdate = existingEntityOpt.get();
+            
+            // Update fields
+            entityToUpdate.setSubjectPartyId(dto.getAccountId()); // Update subjectPartyId
+            entityToUpdate.setObjectPartyId(dto.getObjectId()); // Update objectPartyId
+            entityToUpdate.setDirectionalFlag(dto.getDirectionalFlag());
+            entityToUpdate.setRelationType(dto.getRelationshipType()); // Update relationType
+            entityToUpdate.setRelationshipCategory(dto.getRelationshipCategory());
+            entityToUpdate.setStartDate(dto.getStartDate());
+            entityToUpdate.setEndDate(dto.getEndDate());
+            entityToUpdate.setDescription(dto.getDescription());
+            // Update source, status, statusApproval if they are part of the DTO or need to be changed
+            // entityToUpdate.setSource(dto.getSource());
+            // entityToUpdate.setStatus(dto.getStatus());
+            // entityToUpdate.setStatusApproval(dto.getStatusApproval());
+
+            NX_M_RELATIONSHIP updatedEntity = mRelationshipRepo.save(entityToUpdate);
+
+            result.setSuccess(ResponseUtils.SUCCESS_TRUE);
+            result.setCode(HttpStatus.OK);
+            result.setMessage("Success Update Relationship");
+            result.setData(updatedEntity);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+
+        } catch (Exception e) {
+            logger.error(Constant.LOG_ERROR, e.getMessage(), e);
+            return new ResponseEntity<>(
+                    new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.INTERNAL_SERVER_ERROR,
+                            ResponseUtils.MESSAGE_INTERNAL_SERVER_ERROR, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ResponseObject> delete(Integer id) {
+        try {
+            ResponseObject result = new ResponseObject();
+            
+            if (!mRelationshipRepo.existsById(id)) {
+                result = new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.NOT_FOUND.value(),
+                        "Relationship with id " + id + " not found", ResponseUtils.DATA_EMPTY);
+                return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+            }
+
+            mRelationshipRepo.deleteById(id);
+
+            result.setSuccess(ResponseUtils.SUCCESS_TRUE);
+            result.setCode(HttpStatus.OK);
+            result.setMessage("Success Delete Relationship");
+            result.setData(null);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+
+        } catch (Exception e) {
+            logger.error(Constant.LOG_ERROR, e.getMessage(), e);
+            return new ResponseEntity<>(
+                    new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.INTERNAL_SERVER_ERROR,
+                            ResponseUtils.MESSAGE_INTERNAL_SERVER_ERROR, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

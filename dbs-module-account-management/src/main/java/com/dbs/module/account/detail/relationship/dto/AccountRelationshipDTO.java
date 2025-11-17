@@ -28,6 +28,10 @@ public class AccountRelationshipDTO implements Serializable {
     private String description;
     private String status;
     private String statusApproval;
+    private Date createdDate;
+    private String createdBy;
+    private Date updatedDate;
+    private String updatedBy;
     
     @Override
     public String toString() {
