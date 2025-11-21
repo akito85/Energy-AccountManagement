@@ -1,7 +1,7 @@
 package com.dbs.module.account.detail.servicerequest.service;
 
 import com.dbs.common.base.utils.Constant;
-import com.dbs.common.base.utils.FlowStatus;
+import com.dbs.common.library.utils.FlowStatus;
 import com.dbs.common.base.utils.MaterialTablePagingRequest;
 import com.dbs.common.base.utils.PagingUtils;
 import com.dbs.common.base.utils.ResponseUtils;
@@ -303,9 +303,49 @@ public class ServiceRequestService {
     public ResponseEntity<ResponseObject> getRequestTypes() {
         ResponseObject result;
         try {
-            var types = globalTypeService.getListGlobalTypeValue("Service Request Type");
+            var types = globalTypeService.getGlobalTypeOtherWithValue("Service Request Type");
             result = new ResponseObject(ResponseUtils.SUCCESS_TRUE, HttpStatus.OK,
                 "Success", types);
+            return new ResponseEntity<>(result, result.getHttpCode());
+        } catch (Exception e) {
+            logger.error(Constant.LOG_ERROR, e.getMessage(), e);
+            return new ResponseEntity<>(
+                new ResponseObject(ResponseUtils.SUCCESS_FALSE,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ResponseUtils.MESSAGE_INTERNAL_SERVER_ERROR, null),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Get service request categories from GLOBAL_TYPE
+     */
+    public ResponseEntity<ResponseObject> getRequestCategories() {
+        ResponseObject result;
+        try {
+            var categories = globalTypeService.getGlobalTypeOtherWithValue("Service Request Category");
+            result = new ResponseObject(ResponseUtils.SUCCESS_TRUE, HttpStatus.OK,
+                "Success", categories);
+            return new ResponseEntity<>(result, result.getHttpCode());
+        } catch (Exception e) {
+            logger.error(Constant.LOG_ERROR, e.getMessage(), e);
+            return new ResponseEntity<>(
+                new ResponseObject(ResponseUtils.SUCCESS_FALSE,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ResponseUtils.MESSAGE_INTERNAL_SERVER_ERROR, null),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Get service request subcategories from GLOBAL_TYPE
+     */
+    public ResponseEntity<ResponseObject> getRequestSubcategories() {
+        ResponseObject result;
+        try {
+            var subcategories = globalTypeService.getGlobalTypeOtherWithValue("Service Request Subcategory");
+            result = new ResponseObject(ResponseUtils.SUCCESS_TRUE, HttpStatus.OK,
+                "Success", subcategories);
             return new ResponseEntity<>(result, result.getHttpCode());
         } catch (Exception e) {
             logger.error(Constant.LOG_ERROR, e.getMessage(), e);
