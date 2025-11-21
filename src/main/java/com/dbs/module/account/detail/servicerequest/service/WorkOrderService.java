@@ -1,7 +1,7 @@
 package com.dbs.module.account.detail.servicerequest.service;
 
 import com.dbs.common.base.utils.Constant;
-import com.dbs.common.library.utils.FlowStatus;
+import com.dbs.common.base.utils.FlowStatus;
 import com.dbs.common.base.utils.ResponseUtils;
 import com.dbs.common.library.ctrl.ResponseObject;
 import com.dbs.common.library.services.GlobalTypeValueService;

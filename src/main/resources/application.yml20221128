@@ -1,0 +1,67 @@
+server.port: 8903
+#worker: master
+#
+backend.app.jwt.secret: L3L4-\H3T1I-=].,+)8M3YK1\K4NM_K4*_]M794UT3STPG4NLKA0814-0
+#backend.app.jwt.secret: O5D@g1t_P6N_PR0J3CT_S3CR3T_K3Y_T3ST
+backend.app.jwt.expiration: 2147483647
+#
+#process.client.name: http://ds-module-process-client
+#collect.client.name: http://ds-collect-client
+#collect.master.name: http://ds-collect-master
+#
+##domain.base.url: http://dataservices.southeastasia.cloudapp.azure.com/api
+#domain.base.url: http://localhost:44444
+
+#User Management Datasource
+spring.datasource.driver-class-name: oracle.jdbc.driver.OracleDriver
+spring.datasource.url: jdbc:oracle:thin:@103.65.96.187:1521:ORCLCDB
+spring.datasource.username: shg_crm_new
+spring.datasource.password: shg_crm_new
+spring.hibernate.ddl-auto: update
+spring.hibernate.dialect: org.hibernate.dialect.Oracle12cDialect
+spring.hibernate.show_sql: true
+spring.hibernate.jdbc.batch_size: 100
+
+#spring.primary.entitymanager.packagesToScan: com.ds.common.postgre.primary
+
+spring.datasource.hikari.maxLifetime: 30000
+spring.datasource.hikari.maximumPoolSize: 2
+
+spring.data.rest.defaultMediaType : application/json
+
+#Max upload size
+#spring.servlet.multipart.max-file-size: 1GB
+#spring.servlet.multipart.max-request-size: 1GB
+#
+#spring:
+#  mvc:
+#    converters:
+#      preferred-json-mapper: gson
+#  http:
+#    converters:
+#      preferred-json-mapper: gson
+#  application:
+#    name: ds-web-backend
+#  main.allow-bean-definition-overriding: true
+#
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    serviceUrl:
+#      defaultZone: ${DISCOVERY_URL:http://eureka:password@discovery:12003}/monitor/eureka/
+#ribbon:
+#  eureka:
+#    enabled: true
+#
+#management:
+#  endpoints:
+#    web.exposure.include: "*"
+#  endpoint:
+#    health:
+spring:
+  hateoas:
+    use-hal-as-default-json-media-type: false
+#      show-details: ALWAYS

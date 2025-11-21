@@ -1,7 +1,7 @@
 package com.dbs.module.account.detail.servicerequest.service;
 
 import com.dbs.common.base.utils.Constant;
-import com.dbs.common.library.utils.FlowStatus;
+import com.dbs.common.base.utils.FlowStatus;
 import com.dbs.common.base.utils.ResponseUtils;
 import com.dbs.common.library.ctrl.ResponseObject;
 import com.dbs.common.library.services.GlobalTypeValueService;
@@ -16,7 +16,6 @@ import com.dbs.database.crm.repositories.accountmanagement.Account.MContactRepo;
 import com.dbs.database.crm.repositories.accountmanagement.servicerequest.NxMServiceRequestRepo;
 import com.dbs.database.crm.repositories.accountmanagement.servicerequest.NxRSrDetailsRepo;
 import com.dbs.database.crm.repositories.usermanagement.MAttachmentRepo;
-import com.dbs.database.crm.repositories.usermanagement.RGlobalTypeValueRepo;
 import com.dbs.module.account.detail.servicerequest.dto.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -70,9 +69,6 @@ public class ServiceRequestCompositeService {
 
     @Autowired
     private GlobalTypeValueService globalTypeService;
-
-    @Autowired
-    private RGlobalTypeValueRepo rGlobalTypeValueRepo;
 
     @Autowired
     private Validator validator;
@@ -423,7 +419,7 @@ public class ServiceRequestCompositeService {
             // Create attachment record
             M_ATTACHMENT attachment = new M_ATTACHMENT();
             attachment.setFileName(attachDto.getFileName());
-            attachment.setCategory(attachDto.getCategory());
+            attachment.setFileCategory(attachDto.getCategory());
             attachment.setType(attachDto.getType());
             attachment.setDescription(attachDto.getDescription());
             attachment.setFileSize(attachDto.getFileSize());
@@ -894,8 +890,8 @@ public class ServiceRequestCompositeService {
      */
     private String getStatusName(Integer statusId) {
         try {
-            var status = rGlobalTypeValueRepo.findById(statusId);
-            return status.map(r -> r.getGlbValue()).orElse("UNKNOWN");
+            var status = globalTypeService.getGlobalTypeValueById(statusId);
+            return status != null ? status.getGlbValue() : "UNKNOWN";
         } catch (Exception e) {
             logger.warn("Could not retrieve status name from GLOBAL_TYPE", e);
             return "UNKNOWN";
