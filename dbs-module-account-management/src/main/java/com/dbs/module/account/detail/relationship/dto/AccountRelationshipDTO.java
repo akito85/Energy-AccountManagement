@@ -23,8 +23,8 @@ public class AccountRelationshipDTO implements Serializable {
     private Integer objectId;
     private String objectName;
     private String objectValue;
-    private String startDate;
-    private String endDate;
+    private Date startDate;
+    private Date endDate;
     private String description;
     private String status;
     private String statusApproval;

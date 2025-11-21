@@ -428,5 +428,60 @@ public class AccountRelationshipService {
         return  userInformation.get().getUserLevel().equalsIgnoreCase("SU") ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    
+    // =======================================
+    // GET RELATIONSHIP TYPES BY CATEGORY
+    // =======================================
+    public ResponseEntity<ResponseObject> getRelationshipTypes(String category) {
+        try {
+            ResponseObject result = new ResponseObject();
+
+            // Define relationship type IDs based on category
+            List<Integer> partyRelationshipIds = Arrays.asList(2600, 2601, 2602, 2603, 2604, 2607, 2608, 2610);
+            List<Integer> accountRelationshipIds = Arrays.asList(2605, 2606, 2609);
+
+            List<R_GLOBAL_TYPE_VALUE> relationshipTypes;
+
+            // Global Type ID for RELATIONSHIP_TYPE
+            Integer relationshipTypeGlobalId = 196359;
+
+            if ("ACCOUNT".equalsIgnoreCase(category)) {
+                // Filter for ACCOUNT relationships only
+                relationshipTypes = rGlobalTypeValueRepo.findAll()
+                    .stream()
+                    .filter(type -> type.getGlobalType() != null &&
+                                   type.getGlobalType().equals(relationshipTypeGlobalId) &&
+                                   accountRelationshipIds.contains(type.getGlbTypeValId()))
+                    .collect(Collectors.toList());
+            } else if ("PARTY".equalsIgnoreCase(category)) {
+                // Filter for PARTY relationships only
+                relationshipTypes = rGlobalTypeValueRepo.findAll()
+                    .stream()
+                    .filter(type -> type.getGlobalType() != null &&
+                                   type.getGlobalType().equals(relationshipTypeGlobalId) &&
+                                   partyRelationshipIds.contains(type.getGlbTypeValId()))
+                    .collect(Collectors.toList());
+            } else {
+                // Return ALL relationship types
+                relationshipTypes = rGlobalTypeValueRepo.findAll()
+                    .stream()
+                    .filter(type -> type.getGlobalType() != null &&
+                                   type.getGlobalType().equals(relationshipTypeGlobalId))
+                    .collect(Collectors.toList());
+            }
+
+            result.setSuccess(ResponseUtils.SUCCESS_TRUE);
+            result.setCode(HttpStatus.OK);
+            result.setMessage("Success Get Relationship Types");
+            result.setData(relationshipTypes);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+
+        } catch (Exception e) {
+            logger.error(Constant.LOG_ERROR, e.getMessage(), e);
+            return new ResponseEntity<>(
+                    new ResponseObject(ResponseUtils.SUCCESS_FALSE, HttpStatus.INTERNAL_SERVER_ERROR,
+                            ResponseUtils.MESSAGE_INTERNAL_SERVER_ERROR, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
