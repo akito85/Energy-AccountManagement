@@ -895,7 +895,7 @@ public class ServiceRequestCompositeService {
     private String getStatusName(Integer statusId) {
         try {
             var status = rGlobalTypeValueRepo.findById(statusId);
-            return status.isPresent() ? status.get().getGlbValue() : "UNKNOWN";
+            return status.map(r -> r.getGlbValue()).orElse("UNKNOWN");
         } catch (Exception e) {
             logger.warn("Could not retrieve status name from GLOBAL_TYPE", e);
             return "UNKNOWN";

@@ -318,7 +318,7 @@ public class ServiceRequestService {
     }
 
     /**
-     * Get service request categories from GLOBAL_TYPE
+     * Get service request categories from GLOBAL_TYPE for dropdown
      */
     public ResponseEntity<ResponseObject> getRequestCategories() {
         ResponseObject result;
@@ -338,7 +338,7 @@ public class ServiceRequestService {
     }
 
     /**
-     * Get service request subcategories from GLOBAL_TYPE
+     * Get service request subcategories from GLOBAL_TYPE for dropdown
      */
     public ResponseEntity<ResponseObject> getRequestSubcategories() {
         ResponseObject result;

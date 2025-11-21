@@ -88,7 +88,7 @@ public class ServiceRequestController {
     }
 
     /**
-     * Get service request categories for dropdown
+     * Get service request categories from GLOBAL_TYPE for dropdown
      * GET /v1/dbs/api/account/servicerequest/category
      */
     @GetMapping("/category")
@@ -98,7 +98,7 @@ public class ServiceRequestController {
     }
 
     /**
-     * Get service request subcategories for dropdown
+     * Get service request subcategories from GLOBAL_TYPE for dropdown
      * GET /v1/dbs/api/account/servicerequest/subcategory
      */
     @GetMapping("/subcategory")
