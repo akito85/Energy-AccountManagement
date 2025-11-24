@@ -1,2 +1,5 @@
 target/
 .vscode/
+*.md
+*.txt
+*.sh
